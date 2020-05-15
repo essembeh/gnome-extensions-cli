@@ -1,0 +1,21 @@
+{
+    "files.exclude": {
+        "venv/": true,
+        ".tox/": true,
+        "**/__pycache__/": true,
+    },
+    "python.pythonPath": "venv/bin/python",
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/src/"
+    ],
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--ignore=E501,E203,W503"
+    ],
+    "python.linting.flake8CategorySeverity.N": "Error",
+    "python.linting.flake8CategorySeverity.S": "Error",
+    "python.linting.flake8CategorySeverity.P": "Error",
+}

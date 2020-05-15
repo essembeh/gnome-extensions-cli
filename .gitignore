@@ -1,0 +1,17 @@
+# Python
+__pycache__
+*.pyc
+/src/*.egg-info/
+/build/
+/dist/
+/.eggs/
+
+# Generated
+/venv/
+/.tox/
+/.coverage*
+
+# IDE
+/.vscode/*
+!/.vscode/settings.json
+

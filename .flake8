@@ -1,0 +1,14 @@
+[flake8]
+application-import-names = pytput
+enable-extensions = G
+# Best way to select all installed plugins so far ...
+select = E,F,W,A,B,C,D,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,X,Y,Z
+; E501 line too long
+; E203 whitespace before ':'
+; W503 line break before binary operator
+ignore = E501,E203,W503
+show-source = true
+exclude =
+	.tox
+    venv
+    __pycache__
