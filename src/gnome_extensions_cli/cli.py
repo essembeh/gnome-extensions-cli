@@ -77,13 +77,9 @@ def install_handler(args: Namespace):
         if info is None:
             print("Cannot find extension {0}".format(ext_id))
         elif info.uuid in installed_extensions:
-            print("Extension {i.name} is already installed".format(i=info))
+            print("Extension {i.uuid} is already installed".format(i=info))
         else:
-            print(
-                "Install {i.name} version {i.version} from {i.recommended_url}".format(
-                    i=info
-                )
-            )
+            print("Installing {i.uuid} ({i.version})".format(i=info))
             ext = info.install(args.directory)
             if args.enable_extensions:
                 need_restart |= ext.enable()
@@ -115,25 +111,43 @@ def update_handler(args: Namespace):
         e.uuid: e for e in InstalledExtension.iter_installed(args.directory)
     }
     need_restart = False
-    for ext in installed_extensions.values():
-        if len(args.extensions) and ext.uuid not in args.extensions:
-            continue
-        if not args.all and not ext.enabled:
-            continue
-        if ext.info is None:
-            print(
-                "Cannot find extension {e.uuid} on {url}".format(e=ext, url=GNOME_URL)
-            )
-        elif ext.info.version and (
-            ext.version is None or ext.info.version > ext.version
+    items = (
+        dict.fromkeys(args.extensions)
+        if len(args.extensions)
+        else map(
+            lambda e: e.uuid,
+            filter(lambda e: args.all or e.enabled, installed_extensions.values()),
+        )
+    )
+    for item in items:
+        info = ExtensionInfo.find(item)
+        if info is None:
+            print("Unknown extension {0}".format(item))
+        elif info.uuid not in installed_extensions:
+            if args.install:
+                print("Installing {i.uuid} ({i.version})".format(i=info))
+                ext = info.install(args.directory)
+                if args.enable_extensions:
+                    need_restart |= ext.enable()
+            else:
+                print("Extension {i.uuid} is not installed".format(i=info))
+        elif (
+            installed_extensions[info.uuid].version is None
+            or installed_extensions[info.uuid].version < info.version
         ):
-            print("Update {e.uuid} from {e.version} to {e.info.version}".format(e=ext))
+            ext = installed_extensions[info.uuid]
+            print(
+                "Updating {e.uuid} ({e.version}) over ({i.version})".format(
+                    e=ext, i=info
+                )
+            )
             need_restart |= ext.enabled
             if not ext.read_only:
                 ext.rmtree()
-            ext.info.install(args.directory)
+            info.install(args.directory)
         else:
-            print("Extension {e.uuid} is up-to-date".format(e=ext))
+            print("Extension {i.uuid} is up-to-date".format(i=info))
+
     if need_restart:
         restart_gnome_shell()
 
@@ -163,7 +177,6 @@ def main():
         "--version", action="version", version="%(prog)s {0}".format(__version__)
     )
     parser.add_argument(
-        "-d",
         "--directory",
         type=Path,
         default=Path(expanduser("~/.local/share/gnome-shell/extensions")),
@@ -202,7 +215,7 @@ def main():
         "--disable",
         dest="enable_extensions",
         action="store_false",
-        help="install extensions but do not enable them",
+        help="do not enable extensions which are installed",
     )
     parser_install.add_argument(
         "extensions",
@@ -224,11 +237,18 @@ def main():
         action="store_true",
         help="update all extensions, by default only enabled extensions are updated",
     )
-    parser_install.add_argument(
-        "-n",
-        "--dryrun",
+    parser_update.add_argument(
+        "-d",
+        "--disable",
+        dest="enable_extensions",
+        action="store_false",
+        help="do not enable extensions which are installed",
+    )
+    parser_update.add_argument(
+        "-i",
+        "--install",
         action="store_true",
-        help="dryrun mode, do not install new versions, only print details",
+        help="install extension if not installed",
     )
     parser_update.add_argument(
         "extensions", nargs=ZERO_OR_MORE, help="only update the given extensions",
