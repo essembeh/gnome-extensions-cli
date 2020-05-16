@@ -22,9 +22,9 @@ build: venv clean test
 	test -n "$(VIRTUAL_ENV)"
 	python3 setup.py sdist bdist_wheel
 
-publish: build
+publish-test: build
 	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
-publish-test: build
+publish: build
 	twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
 
