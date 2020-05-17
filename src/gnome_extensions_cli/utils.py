@@ -72,9 +72,7 @@ def enable_extensions(uuid_list: list, enable: bool = True):
                 "set",
                 "org.gnome.shell",
                 "enabled-extensions",
-                "[{0}]".format(
-                    ",".join(map(lambda uuid: '"{0}"'.format(uuid), sorted(new_uuids)))
-                ),
+                "[{0}]".format(",".join(map('"{0}"'.format, sorted(new_uuids)))),
             ]
         )
         return True

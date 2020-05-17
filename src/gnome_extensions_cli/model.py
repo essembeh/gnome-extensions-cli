@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from dataclasses import dataclass, field
 from json import load as jsonload
 from pathlib import Path
@@ -120,19 +121,17 @@ class InstalledExtension:
 
     @staticmethod
     def iter_installed(user_folder: Path, only_user=False):
+        def has_metadata(folder: Path):
+            return (folder / "metadata.json").is_file()
+
+        folders = OrderedDict()
         if not only_user:
-            for root_folder in filter(lambda d: d.is_dir(), SHELL_SYSTEM_FOLDERS):
-                for subfolder in sorted(
-                    filter(
-                        lambda d: (d / "metadata.json").is_file(), root_folder.iterdir()
-                    )
-                ):
-                    yield InstalledExtension(subfolder, True)
+            folders.update((f, True) for f in filter(Path.is_dir, SHELL_SYSTEM_FOLDERS))
         if user_folder and user_folder.is_dir():
-            for subfolder in sorted(
-                filter(lambda d: (d / "metadata.json").is_file(), user_folder.iterdir())
-            ):
-                yield InstalledExtension(subfolder, False)
+            folders[user_folder] = False
+        for root_folder in folders.keys():
+            for subfolder in sorted(filter(has_metadata, root_folder.iterdir())):
+                yield InstalledExtension(subfolder, folders[root_folder])
 
     @property
     def metadata(self):
