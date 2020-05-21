@@ -1,3 +1,5 @@
+pycairo
+PyGObject
 pytput
 requests
 dataclasses; python_version<'3.7'

@@ -1,54 +1,50 @@
-from collections import OrderedDict
-from dataclasses import dataclass, field
-from json import load as jsonload
+from dataclasses import dataclass
+from distutils.version import LooseVersion
+from os import W_OK, access
 from pathlib import Path
-from shutil import rmtree
-from tempfile import NamedTemporaryFile
 from typing import ClassVar
-from urllib.request import urlopen
-from zipfile import ZipFile
 
 import requests
 
-from gnome_extensions_cli.utils import (
-    GNOME_SHELL_VERSION,
-    GNOME_URL,
-    SHELL_SYSTEM_FOLDERS,
-    enable_extensions,
-    list_enabled_extensions,
-)
-from gnome_extensions_cli.version import Version
+from gnome_extensions_cli.utils import get_shell_version
+
+GNOME_URL = "https://extensions.gnome.org"
+GNOME_SHELL_VERSION = get_shell_version()
 
 
 @dataclass
 class ExtensionInfo:
     json: object
-    gnome_shell_target_version: ClassVar[str] = field(init=False)
+    CACHE: ClassVar = {}
 
     @classmethod
-    def build_ext_url(cls, field: str, value: str, shell_version: str = None):
-        out = "{url}/extension-info/?{field}={value}".format(
-            url=GNOME_URL, field=field, value=value
+    def fetch_info(cls, value, shell_version: str = None):
+        url = "{url}/extension-info/?{field}={value}".format(
+            url=GNOME_URL, field="pk" if isinstance(value, int) else "uuid", value=value
         )
         if shell_version:
-            out += "&shell_version={shell_version}".format(shell_version=shell_version)
-        return out
-
-    @classmethod
-    def find(cls, value):
-        field = "uuid"
-        if isinstance(value, int) or (isinstance(value, str) and value.isdigit()):
-            field = "pk"
-        url = ExtensionInfo.build_ext_url(
-            field, value, shell_version=GNOME_SHELL_VERSION
-        )
+            url += "&shell_version={shell_version}".format(shell_version=shell_version)
         req = requests.get(url)
         if req.status_code == 200:
             return ExtensionInfo(req.json())
 
+    @classmethod
+    def find(cls, value):
+        if isinstance(value, str) and value.isdigit():
+            value = int(value)
+        for info in cls.CACHE.values():
+            if (isinstance(value, int) and info.pk == value) or (
+                isinstance(value, str) and info.uuid == value
+            ):
+                return info
+        out = cls.fetch_info(value, shell_version=GNOME_SHELL_VERSION)
+        if out:
+            cls.CACHE[out.uuid] = out
+        return out
+
     def iter_versions(self, sort_desc: bool = False):
-        data = {Version(k): v for k, v in self.json["shell_version_map"].items()}
-        for shell_version in sorted(data.keys(), reverse=sort_desc):
+        data = self.json["shell_version_map"]
+        for shell_version in sorted(data.keys(), reverse=sort_desc, key=LooseVersion):
             tag, version = data[shell_version]["pk"], data[shell_version]["version"]
             yield {
                 "shell_version": shell_version,
@@ -77,7 +73,7 @@ class ExtensionInfo:
 
     @property
     def version(self):
-        return Version(self.json["version"]) if "version" in self.json else None
+        return self.json.get("version")
 
     @property
     def tag(self):
@@ -94,79 +90,24 @@ class ExtensionInfo:
     def url(self):
         return "{base}/extension/{s.pk}".format(base=GNOME_URL, s=self)
 
-    def install(self, extensions_root_dir: Path):
-        target_dir = extensions_root_dir / self.uuid
-        if target_dir.exists():
-            raise ValueError("Extension folder {0} already exists".format(target_dir))
-        target_dir.mkdir(parents=True)
-        try:
-            with NamedTemporaryFile() as fp:
-                with urlopen(self.recommended_url) as stream:
-                    fp.write(stream.read())
-                fp.seek(0)
-                with ZipFile(fp.name) as zf:
-                    for member in zf.namelist():
-                        zf.extract(member, path=target_dir)
-            return InstalledExtension(target_dir, False)
-        except BaseException as e:
-            rmtree(str(target_dir))
-            raise e
+    def __str__(self):
+        return "{s.uuid} (v{s.version})".format(s=self) if self.version else self.uuid
 
 
 @dataclass
-class InstalledExtension:
+class Extension:
+    uuid: str
+    name: str
+    version: str
     folder: Path
-    read_only: bool
-    _info: ExtensionInfo = field(init=False, default=None)
-
-    @staticmethod
-    def iter_installed(user_folder: Path, only_user=False):
-        def has_metadata(folder: Path):
-            return (folder / "metadata.json").is_file()
-
-        folders = OrderedDict()
-        if not only_user:
-            folders.update((f, True) for f in filter(Path.is_dir, SHELL_SYSTEM_FOLDERS))
-        if user_folder and user_folder.is_dir():
-            folders[user_folder] = False
-        for root_folder in folders.keys():
-            for subfolder in sorted(filter(has_metadata, root_folder.iterdir())):
-                yield InstalledExtension(subfolder, folders[root_folder])
 
     @property
-    def metadata(self):
-        with (self.folder / "metadata.json").open() as fp:
-            return jsonload(fp)
-
-    @property
-    def name(self):
-        return self.metadata.get("name")
-
-    @property
-    def version(self):
-        return Version(self.metadata["version"]) if "version" in self.metadata else None
-
-    @property
-    def uuid(self):
-        return self.metadata.get("uuid")
+    def read_only(self):
+        return not access(str(self.folder), W_OK)
 
     @property
     def info(self):
-        if self._info is None:
-            self._info = ExtensionInfo.find(self.uuid) or False
-        return self._info if isinstance(self._info, ExtensionInfo) else None
+        return ExtensionInfo.find(self.uuid)
 
-    @property
-    def enabled(self):
-        return self.uuid in list_enabled_extensions()
-
-    def rmtree(self):
-        if self.read_only:
-            raise ValueError("Cannot uninstall a system extension")
-        rmtree(str(self.folder))
-
-    def enable(self):
-        return enable_extensions([self.uuid], enable=True)
-
-    def disable(self):
-        return enable_extensions([self.uuid], enable=False)
+    def __str__(self):
+        return "{s.uuid} (v{s.version})".format(s=self) if self.version else self.uuid

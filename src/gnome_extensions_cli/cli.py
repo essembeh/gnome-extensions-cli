@@ -1,49 +1,67 @@
+import sys
 from argparse import ONE_OR_MORE, ZERO_OR_MORE, ArgumentParser, Namespace
 from collections import OrderedDict
-from os.path import expanduser
-from pathlib import Path
 
 from gnome_extensions_cli import __title__, __version__
-from gnome_extensions_cli.model import ExtensionInfo, InstalledExtension
-from gnome_extensions_cli.utils import GNOME_URL, enable_extensions, restart_gnome_shell
+from gnome_extensions_cli.manager import (
+    DbusExtensionManager,
+    ExtensionManager,
+    FilesystemExtensionManager,
+)
+from gnome_extensions_cli.model import ExtensionInfo, GNOME_URL
+from gnome_extensions_cli.utils import version_comparator
+
+MANAGERS = OrderedDict(
+    (("dbus", DbusExtensionManager), ("file", FilesystemExtensionManager))
+)
 
 
-def list_handler(args: Namespace):
-    installed_extensions = OrderedDict(
-        (ext_id.uuid, ext_id)
-        for ext_id in InstalledExtension.iter_installed(
-            args.directory, only_user=not args.all
-        )
-    )
+def uuid_resolve(uuid):
+    if isinstance(uuid, str) and uuid.isdigit():
+        info = ExtensionInfo.find(int(uuid))
+        if info:
+            return info.uuid
+    return uuid
+
+
+def edit_handler(args: Namespace, manager: ExtensionManager):
+    ext = manager[args.extension]
+    if ext is None:
+        print("Extensions {0} is not installed".format(args.extension))
+        return 1
+    else:
+        manager.edit_extension(ext)
+
+
+def list_handler(args: Namespace, manager: ExtensionManager):
+    installed_extensions = {e.uuid: e for e in manager.list_installed_extensions()}
+    enabled_uuids = manager.get_enabled_uuids()
+
+    if args.verbose:
+        print("Gnome Shell", manager.current_shell_version)
+
     print("Installed extensions:")
-    for uuid in sorted(installed_extensions.keys()):
+    for uuid in sorted(
+        installed_extensions.keys(),
+        key=lambda x: str(x not in enabled_uuids) if args.sort else "" + x.lower(),
+    ):
         ext = installed_extensions[uuid]
-        if ext.version:
-            print(
-                "[{enabled}] {e.uuid}  (v{e.version})".format(
-                    e=ext, enabled="X" if ext.enabled else " "
-                )
-            )
-        else:
-            print(
-                "[{enabled}] {e.uuid}".format(
-                    e=ext, enabled="X" if ext.enabled else " "
-                )
-            )
-
+        print(
+            "[{enabled}] {e}".format(
+                e=ext, enabled="X" if ext.uuid in enabled_uuids else " "
+            ),
+            " #{e.info.pk}".format(e=ext) if args.verbose and ext.info else "",
+            (" /system" if ext.read_only else " /user") if args.verbose else "",
+            sep="",
+        )
         if args.verbose and ext.info:
-            if ext.info.version and (
-                ext.version is None or ext.info.version > ext.version
-            ):
-                print("      available version: {e.info.version}".format(e=ext))
+            if version_comparator(ext.version, ext.info.version) > 0:
+                print("      version {e.info.version} is available".format(e=ext))
 
 
-def search_handler(args: Namespace):
-    installed_extensions = {
-        ext_id.uuid: ext_id
-        for ext_id in InstalledExtension.iter_installed(args.directory)
-    }
-    for ext_id in list(dict.fromkeys(args.extensions)):
+def search_handler(args: Namespace, manager: ExtensionManager):
+    installed_extensions = {e.uuid: e for e in manager.list_installed_extensions()}
+    for ext_id in dict.fromkeys(args.extensions):
         info = ExtensionInfo.find(ext_id)
         if info:
             print("{i.name}: {i.uuid}".format(i=info))
@@ -66,57 +84,44 @@ def search_handler(args: Namespace):
             print("Cannot find extension {ext_id}".format(ext_id=ext_id))
 
 
-def install_handler(args: Namespace):
-    installed_extensions = {
-        ext_id.uuid: ext_id
-        for ext_id in InstalledExtension.iter_installed(args.directory, only_user=True)
-    }
-    need_restart = False
-    for ext_id in list(dict.fromkeys(args.extensions)):
+def install_handler(args: Namespace, manager: ExtensionManager):
+    installed_extensions = {e.uuid: e for e in manager.list_installed_extensions()}
+    for ext_id in dict.fromkeys(args.extensions):
         info = ExtensionInfo.find(ext_id)
         if info is None:
             print("Cannot find extension {0}".format(ext_id))
         elif info.uuid in installed_extensions:
             print("Extension {i.uuid} is already installed".format(i=info))
         else:
-            print("Installing {i.uuid} ({i.version})".format(i=info))
-            ext = info.install(args.directory)
-            if args.enable_extensions:
-                need_restart |= ext.enable()
-    if need_restart:
-        restart_gnome_shell()
+            print("Install {i}".format(i=info))
+            manager.install_extension(info)
 
 
-def uninstall_handler(args: Namespace):
-    installed_extensions = {
-        e.uuid: e for e in InstalledExtension.iter_installed(args.directory)
-    }
-    need_restart = False
-    for e in list(dict.fromkeys(args.extensions)):
+def uninstall_handler(args: Namespace, manager: ExtensionManager):
+    installed_extensions = {e.uuid: e for e in manager.list_installed_extensions()}
+    for e in dict.fromkeys(args.extensions):
         ext = installed_extensions.get(e)
         if ext is None:
             print("Extensions {0} is not installed".format(e))
         elif ext.read_only:
-            print("Extensions {e.uuid} is a system extension".format(e=ext))
+            print("Cannot uninstall {e} which is a system extension".format(e=ext))
         else:
-            print("Uninstall {e.uuid} from {e.folder}".format(e=ext))
-            need_restart |= ext.disable()
-            ext.rmtree()
-    if need_restart:
-        restart_gnome_shell()
+            print("Uninstall {e}".format(e=ext))
+            manager.uninstall_extension(ext)
 
 
-def update_handler(args: Namespace):
-    installed_extensions = {
-        e.uuid: e for e in InstalledExtension.iter_installed(args.directory)
-    }
-    need_restart = False
+def update_handler(args: Namespace, manager: ExtensionManager):
+    installed_extensions = {e.uuid: e for e in manager.list_installed_extensions()}
+    enabled_uuids = manager.get_enabled_uuids()
     items = (
         dict.fromkeys(args.extensions)
         if len(args.extensions)
         else map(
             lambda e: e.uuid,
-            filter(lambda e: args.all or e.enabled, installed_extensions.values()),
+            filter(
+                lambda e: args.all or e.uuid in enabled_uuids,
+                installed_extensions.values(),
+            ),
         )
     )
     for item in items:
@@ -125,50 +130,37 @@ def update_handler(args: Namespace):
             print("Unknown extension {0}".format(item))
         elif info.uuid not in installed_extensions:
             if args.install:
-                print("Installing {i.uuid} ({i.version})".format(i=info))
-                ext = info.install(args.directory)
-                if args.enable_extensions:
-                    need_restart |= ext.enable()
+                print("Installing missing extension {i}".format(i=info))
+                manager.install_extension(info)
             else:
                 print("Extension {i.uuid} is not installed".format(i=info))
         elif (
-            installed_extensions[info.uuid].version is None
-            or installed_extensions[info.uuid].version < info.version
+            version_comparator(installed_extensions[info.uuid].version, info.version)
+            > 0
         ):
             ext = installed_extensions[info.uuid]
             print(
-                "Updating {e.uuid} ({e.version}) over ({i.version})".format(
-                    e=ext, i=info
-                )
+                "Update {e.uuid} ({e.version}) over ({i.version})".format(e=ext, i=info)
             )
-            need_restart |= ext.enabled
-            if not ext.read_only:
-                ext.rmtree()
-            info.install(args.directory)
+            manager.install_extension(info)
         else:
             print("Extension {i.uuid} is up-to-date".format(i=info))
 
-    if need_restart:
-        restart_gnome_shell()
 
-
-def enable_handler(args: Namespace):
-    installed_map = {
-        e.uuid: e for e in InstalledExtension.iter_installed(args.directory)
-    }
+def enable_handler(args: Namespace, manager: ExtensionManager):
+    installed_extensions = {e.uuid: e for e in manager.list_installed_extensions()}
     uuid_list = []
-    for e in list(dict.fromkeys(args.extensions)):
-        if e in installed_map:
+    for e in dict.fromkeys(args.extensions):
+        if e in installed_extensions:
             uuid_list.append(e)
         else:
             print("Cannot enable '{0}', extension is not installed".format(e))
-    if enable_extensions(uuid_list, enable=True):
-        restart_gnome_shell()
+    if len(uuid_list):
+        manager.enable_uuid(*uuid_list)
 
 
-def disable_handler(args: Namespace):
-    if enable_extensions(dict.fromkeys(args.extensions), enable=False):
-        restart_gnome_shell()
+def disable_handler(args: Namespace, manager: ExtensionManager):
+    manager.disable_uuid(*dict.fromkeys(args.extensions))
 
 
 def main():
@@ -177,95 +169,109 @@ def main():
         "--version", action="version", version="%(prog)s {0}".format(__version__)
     )
     parser.add_argument(
-        "--directory",
-        type=Path,
-        default=Path(expanduser("~/.local/share/gnome-shell/extensions")),
-        help="folder where extensions are installed",
+        "--backend",
+        choices=MANAGERS.keys(),
+        default=next(iter(MANAGERS.keys())),
+        type=str.lower,
+        help="implementation to use to manage extensions",
     )
     subparsers = parser.add_subparsers(help="sub-command help")
-    parser_list = subparsers.add_parser("list", help="list installed extensions")
-    parser_list.add_argument(
+
+    # ACTION: list
+    subparser = subparsers.add_parser("list", help="list installed extensions")
+    subparser.add_argument(
         "-v", "--verbose", action="store_true", help="display more informations"
     )
-    parser_list.add_argument(
-        "-a",
-        "--all",
-        action="store_true",
-        help="also list system installed extensions",
+    subparser.add_argument(
+        "--sort", action="store_true", help="sort enabled extensions first"
     )
-    parser_list.set_defaults(handler=list_handler)
+    subparser.set_defaults(handler=list_handler)
 
-    parser_search = subparsers.add_parser(
+    # ACTION: search
+    subparser = subparsers.add_parser(
         "search", help="search available extensions on {0}".format(GNOME_URL),
     )
-    parser_search.add_argument(
+    subparser.add_argument(
         "-v", "--verbose", action="store_true", help="display more informations"
     )
-    parser_search.set_defaults(handler=search_handler)
-    parser_search.add_argument(
+    subparser.set_defaults(handler=search_handler)
+    subparser.add_argument(
+        "extensions", nargs=ONE_OR_MORE, help="uuid or extension number",
+    )
+
+    # ACTION: install
+    subparser = subparsers.add_parser("install", help="install extension")
+    subparser.set_defaults(handler=install_handler)
+    subparser.add_argument(
+        "extensions", nargs=ONE_OR_MORE, help="uuid or extension number",
+    )
+
+    # ACTION: uninstall
+    subparser = subparsers.add_parser("uninstall", help="uninstall extension")
+    subparser.set_defaults(handler=uninstall_handler)
+    subparser.add_argument(
         "extensions",
         nargs=ONE_OR_MORE,
-        help="uuid or extension number from {0}".format(GNOME_URL),
+        type=uuid_resolve,
+        help="uuid or extension number",
     )
 
-    parser_install = subparsers.add_parser("install", help="install extension")
-    parser_install.set_defaults(handler=install_handler)
-    parser_install.add_argument(
-        "-d",
-        "--disable",
-        dest="enable_extensions",
-        action="store_false",
-        help="do not enable extensions which are installed",
-    )
-    parser_install.add_argument(
-        "extensions",
-        nargs=ONE_OR_MORE,
-        help="uuid or extension number (from {url}) to install".format(url=GNOME_URL),
-    )
-
-    parser_uninstall = subparsers.add_parser("uninstall", help="uninstall extension")
-    parser_uninstall.set_defaults(handler=uninstall_handler)
-    parser_uninstall.add_argument(
-        "extensions", nargs=ONE_OR_MORE, help="uuid of extensions to uninstall",
-    )
-
-    parser_update = subparsers.add_parser("update", help="update installed extensions")
-    parser_update.set_defaults(handler=update_handler)
-    parser_update.add_argument(
+    # ACTION: update
+    subparser = subparsers.add_parser("update", help="update installed extensions")
+    subparser.set_defaults(handler=update_handler)
+    subparser.add_argument(
         "-a",
         "--all",
         action="store_true",
         help="update all extensions, by default only enabled extensions are updated",
     )
-    parser_update.add_argument(
-        "-d",
-        "--disable",
-        dest="enable_extensions",
-        action="store_false",
-        help="do not enable extensions which are installed",
-    )
-    parser_update.add_argument(
+    subparser.add_argument(
         "-i",
         "--install",
         action="store_true",
         help="install extension if not installed",
     )
-    parser_update.add_argument(
-        "extensions", nargs=ZERO_OR_MORE, help="only update the given extensions",
+    subparser.add_argument(
+        "extensions",
+        nargs=ZERO_OR_MORE,
+        type=uuid_resolve,
+        help="uuid or extension number",
     )
 
-    parser_enable = subparsers.add_parser("enable", help="enable extension")
-    parser_enable.set_defaults(handler=enable_handler)
-    parser_enable.add_argument(
-        "extensions", nargs=ONE_OR_MORE, help="uuid of extensions to enable",
+    # ACTION: enable
+    subparser = subparsers.add_parser("enable", help="enable extension")
+    subparser.set_defaults(handler=enable_handler)
+    subparser.add_argument(
+        "extensions",
+        nargs=ONE_OR_MORE,
+        type=uuid_resolve,
+        help="uuid of extensions to enable",
     )
 
-    parser_disable = subparsers.add_parser("disable", help="disable extension")
-    parser_disable.set_defaults(handler=disable_handler)
-    parser_disable.add_argument(
-        "extensions", nargs=ONE_OR_MORE, help="uuid of extensions to disable",
+    # ACTION: disable
+    subparser = subparsers.add_parser("disable", help="disable extension")
+    subparser.set_defaults(handler=disable_handler)
+    subparser.add_argument(
+        "extensions",
+        nargs=ONE_OR_MORE,
+        type=uuid_resolve,
+        help="uuid or extension number",
     )
+
+    # ACTION: edit
+    subparser = subparsers.add_parser("edit", help="edit extension preferences")
+    subparser.set_defaults(handler=edit_handler)
+    subparser.add_argument(
+        "extension", type=uuid_resolve, help="uuid or extension number",
+    )
+
     args = parser.parse_args()
 
     if "handler" in args:
-        return args.handler(args)
+        try:
+            return args.handler(args, MANAGERS[args.backend]())
+        except KeyboardInterrupt:
+            return 130
+        except BaseException as e:
+            print("ERROR", type(e).__name__, e, file=sys.stderr)
+            return 1

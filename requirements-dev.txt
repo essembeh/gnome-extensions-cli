@@ -2,9 +2,7 @@
 setuptools
 setuptools-scm
 pytest
-pytest-xdist
 pytest-cov
-tox
 coverage 
 rope
 black
