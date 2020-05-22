@@ -124,14 +124,22 @@ def update_handler(args: Namespace, manager: ExtensionManager):
             ),
         )
     )
+    update_available = False
     for item in items:
         info = ExtensionInfo.find(item)
         if info is None:
             print("Unknown extension {0}".format(item))
         elif info.uuid not in installed_extensions:
             if args.install:
-                print("Installing missing extension {i}".format(i=info))
-                manager.install_extension(info)
+                print(
+                    "[DRYRUN] " if args.dry_run else "",
+                    "Installing missing extension {i}".format(i=info),
+                    sep="",
+                )
+                if args.dry_run:
+                    update_available = True
+                else:
+                    manager.install_extension(info)
             else:
                 print("Extension {i.uuid} is not installed".format(i=info))
         elif (
@@ -140,11 +148,20 @@ def update_handler(args: Namespace, manager: ExtensionManager):
         ):
             ext = installed_extensions[info.uuid]
             print(
-                "Update {e.uuid} ({e.version}) over ({i.version})".format(e=ext, i=info)
+                "[DRYRUN] " if args.dry_run else "",
+                "Update {e.uuid} ({e.version}) over ({i.version})".format(
+                    e=ext, i=info
+                ),
+                sep="",
             )
-            manager.install_extension(info)
+            if args.dry_run:
+                update_available = True
+            else:
+                manager.install_extension(info)
         else:
             print("Extension {i.uuid} is up-to-date".format(i=info))
+
+    return 2 if update_available else 0
 
 
 def enable_handler(args: Namespace, manager: ExtensionManager):
@@ -230,6 +247,12 @@ def main():
         "--install",
         action="store_true",
         help="install extension if not installed",
+    )
+    subparser.add_argument(
+        "-n",
+        "--dry-run",
+        action="store_true",
+        help="only checks if update are available, return 0 if everything is up-to-date, 2 if some updates can be installed",
     )
     subparser.add_argument(
         "extensions",
