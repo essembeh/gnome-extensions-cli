@@ -1,3 +1,7 @@
+## For devel, should be installed with Desktop Debian/Ubuntu
+pycairo
+PyGObject
+
 ## Dev tools
 setuptools
 setuptools-scm
