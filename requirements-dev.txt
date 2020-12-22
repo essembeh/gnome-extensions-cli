@@ -1,6 +1,6 @@
 ## For devel, should be installed with Desktop Debian/Ubuntu
-pycairo
-PyGObject
+#pycairo
+#PyGObject
 
 ## Dev tools
 setuptools

@@ -8,7 +8,7 @@ clean:
 		.coverage 
 
 venv: requirements.txt requirements-dev.txt 
-	test -d venv || python3 -m virtualenv -p python3 venv --no-site-packages
+	test -d venv || python3 -m virtualenv -p python3 venv --system-site-packages
 	bash -c "source venv/bin/activate && \
 		pip install -r requirements.txt -r requirements-dev.txt"
 	touch venv
