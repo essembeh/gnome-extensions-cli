@@ -1,16 +1,13 @@
 # Python
 __pycache__
 *.pyc
-/src/*.egg-info/
-/build/
-/dist/
-/.eggs/
 
 # Generated
-/venv/
-/.coverage*
+/.coverage
+/coverage.xml
+/htmlcov/
+/dist/
 
 # IDE
 /.vscode/*
 !/.vscode/settings.json
-

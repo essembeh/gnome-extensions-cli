@@ -8,7 +8,7 @@ from gnome_extensions_cli.manager import (
     ExtensionManager,
     FilesystemExtensionManager,
 )
-from gnome_extensions_cli.model import ExtensionInfo, GNOME_URL
+from gnome_extensions_cli.model import GNOME_URL, ExtensionInfo
 from gnome_extensions_cli.utils import version_comparator
 
 MANAGERS = OrderedDict(
@@ -77,7 +77,8 @@ def search_handler(args: Namespace, manager: ExtensionManager):
             for data in info.iter_versions(sort_desc=True):
                 print(
                     "      version {version} for Gnome Shell {shell_version}".format(
-                        version=data["version"], shell_version=data["shell_version"],
+                        version=data["version"],
+                        shell_version=data["shell_version"],
                     )
                 )
         else:
@@ -180,7 +181,7 @@ def disable_handler(args: Namespace, manager: ExtensionManager):
     manager.disable_uuid(*dict.fromkeys(args.extensions))
 
 
-def main():
+def run():
     parser = ArgumentParser(prog=__title__)
     parser.add_argument(
         "--version", action="version", version="%(prog)s {0}".format(__version__)
@@ -206,21 +207,26 @@ def main():
 
     # ACTION: search
     subparser = subparsers.add_parser(
-        "search", help="search available extensions on {0}".format(GNOME_URL),
+        "search",
+        help="search available extensions on {0}".format(GNOME_URL),
     )
     subparser.add_argument(
         "-v", "--verbose", action="store_true", help="display more informations"
     )
     subparser.set_defaults(handler=search_handler)
     subparser.add_argument(
-        "extensions", nargs=ONE_OR_MORE, help="uuid or extension number",
+        "extensions",
+        nargs=ONE_OR_MORE,
+        help="uuid or extension number",
     )
 
     # ACTION: install
     subparser = subparsers.add_parser("install", help="install extension")
     subparser.set_defaults(handler=install_handler)
     subparser.add_argument(
-        "extensions", nargs=ONE_OR_MORE, help="uuid or extension number",
+        "extensions",
+        nargs=ONE_OR_MORE,
+        help="uuid or extension number",
     )
 
     # ACTION: uninstall
@@ -285,7 +291,9 @@ def main():
     subparser = subparsers.add_parser("edit", help="edit extension preferences")
     subparser.set_defaults(handler=edit_handler)
     subparser.add_argument(
-        "extension", type=uuid_resolve, help="uuid or extension number",
+        "extension",
+        type=uuid_resolve,
+        help="uuid or extension number",
     )
 
     args = parser.parse_args()
