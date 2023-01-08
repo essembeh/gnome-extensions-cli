@@ -150,7 +150,7 @@ def update_handler(args: Namespace, manager: ExtensionManager):
             ext = installed_extensions[info.uuid]
             print(
                 "[DRYRUN] " if args.dry_run else "",
-                "Update {e.uuid} ({e.version}) over ({i.version})".format(
+                "Update {e.uuid} ({i.version}) over ({e.version})".format(
                     e=ext, i=info
                 ),
                 sep="",
