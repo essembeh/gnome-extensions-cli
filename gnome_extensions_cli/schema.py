@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field, NoneStr  # pylint: disable=no-name-in-module
 
@@ -14,7 +14,7 @@ class Metadata(BaseModel):
     extension_id: NoneStr = Field(alias="extension-id")
     shell_version: Optional[List[str]] = Field(alias="shell-version")
     url: NoneStr
-    version: Optional[int]
+    version: Optional[Union[int, str]]
     path: Optional[Path]
 
 
