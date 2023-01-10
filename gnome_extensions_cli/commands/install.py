@@ -1,8 +1,6 @@
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
 
-from colorama import Fore
-
-from ..icons import Icons
+from ..icons import Color, Icons
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
 
@@ -25,21 +23,20 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
             uuid, shell_version=manager.get_current_shell_version()
         )
         if available_extension is None:
-            print(
-                f"{Icons.ERROR} Cannot find extension"
-                f"({Fore.YELLOW}{uuid}{Fore.RESET})",
-            )
+            print(Icons.ERROR, f"Cannot find extension ({Color.YELLOW(uuid)})")
         elif available_extension.uuid in installed_extensions:
             print(
+                Icons.DRYRUN,
                 f"Extension {available_extension.name}",
-                f"({Fore.YELLOW}{available_extension.uuid}{Fore.RESET})",
+                f"({Color.YELLOW(available_extension.uuid)})",
                 "is already installed",
             )
             manager.enable_uuids([uuid])
         else:
             print(
+                Icons.PACKAGE,
                 f"Install {available_extension.name}",
-                f"({Fore.YELLOW}{available_extension.uuid}{Fore.RESET})",
+                f"({Color.YELLOW(available_extension.uuid)})",
                 f"v{available_extension.version}",
             )
             manager.install_extension(available_extension)

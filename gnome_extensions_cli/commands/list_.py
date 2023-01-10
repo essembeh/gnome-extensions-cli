@@ -1,8 +1,6 @@
 from argparse import ArgumentParser, Namespace
 
-from colorama import Fore
-
-from ..icons import Icons
+from ..icons import Color, Icons
 from ..manager import ExtensionManager
 from ..schema import InstalledExtension
 from ..store import GnomeExtensionStore
@@ -26,11 +24,9 @@ def print_ext(ext: InstalledExtension, enabled: bool):
     print(
         Icons.DOT_BLUE if enabled else Icons.DOT_RED,
         f"{ext.metadata.name}",
-        f"({Fore.YELLOW}{ext.uuid}{Fore.RESET})",
+        f"({Color.YELLOW(ext.uuid)})",
         f"v{ext.metadata.version}" if ext.metadata.version is not None else "",
-        f"{Fore.RED}/system{Fore.RESET}"
-        if ext.read_only
-        else f"{Fore.GREEN}/user{Fore.RESET}",
+        Color.RED("/system") if ext.read_only else Color.GREEN("/user"),
     )
 
 

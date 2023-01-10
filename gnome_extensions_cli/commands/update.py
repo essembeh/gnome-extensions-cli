@@ -1,10 +1,7 @@
 from argparse import ZERO_OR_MORE, ArgumentParser, Namespace
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from operator import itemgetter
 
-from colorama import Fore
-
-from ..icons import Icons
+from ..icons import Color, Icons
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
 from ..utils import confirm, version_comparator
@@ -54,11 +51,9 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
             result = job.result()
             if result is not None:
                 available_extensions[uuid] = result
-                print(f"[{index}/{len(jobs)}] Fetch {Fore.YELLOW}{uuid}{Fore.RESET}")
+                print(f"[{index}/{len(jobs)}] Fetch {Color.YELLOW(uuid)}")
             else:
-                print(
-                    f"[{index}/{len(jobs)}] Could not find {Fore.YELLOW}{uuid}{Fore.RESET}"
-                )
+                print(f"[{index}/{len(jobs)}] Could not find {Color.YELLOW(uuid)}")
     print("")
     # upate all extension with a newer version
     extensions_to_update = list(
@@ -85,30 +80,35 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
     )
 
     if len(extensions_to_update) + len(extensions_to_install) == 0:
-        print(f"{Icons.OK} {len(uuids)} extension(s) up-to-date")
+        print(f"{Icons.THUMB_UP} {len(uuids)} extension(s) up-to-date")
     else:
         if len(extensions_to_update) > 0:
-            print("Extensions to update:")
-            print("  ", " ".join(map(itemgetter("uuid"), extensions_to_update)))
+            print(Icons.PACKAGE, "Extensions to update:")
+            for ext in extensions_to_update:
+                print("  ", Color.YELLOW(ext.uuid))
 
         if len(extensions_to_install) > 0:
-            print("Extensions to install:")
-            print("  ", " ".join(map(itemgetter("uuid"), extensions_to_install)))
+            print(Icons.PACKAGE, "Extensions to install:")
+            for ext in extensions_to_install:
+                print("  ", Color.YELLOW(ext.uuid))
 
         if args.yes or confirm("Continue?", default=True):
             for available_extension in extensions_to_update:
+                installed_extension = installed_extensions[available_extension.uuid]
                 print(
                     f"Update {available_extension.name}",
-                    f"({Fore.YELLOW}{available_extension.uuid}{Fore.RESET})",
+                    f"({Color.YELLOW(available_extension.uuid)})",
                     f"v{available_extension.version}",
-                    f"over v{installed_extensions[available_extension.uuid].metadata.version or ''}",
+                    f"over v{installed_extension.metadata.version}"
+                    if installed_extension.metadata.version is not None
+                    else "",
                 )
                 manager.install_extension(available_extension)
 
             for available_extension in extensions_to_install:
                 print(
                     f"Install {available_extension.name}",
-                    f"({Fore.YELLOW}{available_extension.uuid}{Fore.RESET})",
+                    f"({Color.YELLOW(available_extension.uuid)})",
                     f"v{available_extension.version}",
                 )
                 manager.install_extension(available_extension)

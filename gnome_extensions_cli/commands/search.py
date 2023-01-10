@@ -1,8 +1,6 @@
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
 
-from colorama import Fore, Style
-
-from ..icons import Icons
+from ..icons import Color, Icons
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
 
@@ -22,7 +20,7 @@ def configure(parser: ArgumentParser):
 
 
 def print_key_value(key: str, value: str, indent: int = 0):
-    print(INDENT * indent, f"{Style.DIM}{key}{Style.NORMAL}:", value or "")
+    print(INDENT * indent, Color.DEFAULT(key, style="dim"), ":", value or "")
 
 
 def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
@@ -35,7 +33,7 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
             ext = installed_extensions.get(info.uuid)
             print(
                 Icons.DOT_BLUE if ext is not None else Icons.DOT_WHITE,
-                f"{info.name} ({Fore.YELLOW}{info.uuid}{Fore.RESET})",
+                f"{info.name} ({Color.YELLOW(info.uuid)})",
             )
             print_key_value("link", f"{store.url}{info.link}", 1)
             print_key_value("screenshot", f"{store.url}{info.screenshot}", 1)

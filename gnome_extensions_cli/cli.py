@@ -3,7 +3,6 @@ command line interface
 """
 from argparse import ArgumentParser
 
-from colorama import Fore
 from gi.repository import GLib
 
 from . import __version__
@@ -19,7 +18,7 @@ from .commands import (
 )
 from .dbus import DbusExtensionManager
 from .filesystem import FilesystemExtensionManager
-from .icons import Icons
+from .icons import Color, Icons
 from .store import GnomeExtensionStore
 
 
@@ -104,8 +103,8 @@ def run():
         handler = args.handler if "handler" in args else list_.run
         handler(args, manager, store)
     except KeyboardInterrupt:
-        print(f"{Icons.ERROR} Process interrupted")
+        print(Icons.ERROR, "Process interrupted")
         exit(1)
     except BaseException as error:  # pylint: disable=broad-except
-        print(f"{Icons.BOOM} Error: {Fore.RED}{error}{Fore.RESET}")
+        print(Icons.BOOM, "Error:", Color.RED(error))
         raise error

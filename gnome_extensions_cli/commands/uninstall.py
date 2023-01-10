@@ -1,8 +1,6 @@
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
 
-from colorama import Fore
-
-from ..icons import Icons
+from ..icons import Color, Icons
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
 
@@ -25,17 +23,17 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
         if installed_extension is None:
             print(
                 Icons.ERROR,
-                f"Extension {Fore.YELLOW}{uuid}{Fore.RESET} is not installed",
+                f"Extension {Color.YELLOW(uuid)} is not installed",
             )
         elif installed_extension.read_only:
             print(
                 Icons.ERROR,
-                f"Cannot uninstall {Fore.YELLOW}{uuid}{Fore.RESET}, it is a system extension",
+                f"Cannot uninstall {Color.YELLOW(uuid)}, it is a system extension",
             )
         else:
             print(
-                Icons.OK,
+                Icons.TRASH,
                 f"Uninstall {installed_extension.metadata.name}",
-                f"({Fore.YELLOW}{installed_extension.uuid}{Fore.RESET})",
+                f"({Color.YELLOW(installed_extension.uuid)})",
             )
             manager.uninstall_extension(installed_extension)
