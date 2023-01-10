@@ -22,6 +22,11 @@ def configure(parser: ArgumentParser):
         help="do not prompt confirmation for update/install",
     )
     parser.add_argument(
+        "--user",
+        action="store_true",
+        help="only update /user extensions, ignore /system ones",
+    )
+    parser.add_argument(
         "uuids",
         nargs=ZERO_OR_MORE,
         metavar="UUID",
@@ -63,8 +68,11 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
             )
             > 0,
             filter(
-                lambda ae: ae.uuid in installed_extensions,
-                available_extensions.values(),
+                lambda ae: not args.user or not installed_extensions[ae.uuid].read_only,
+                filter(
+                    lambda ae: ae.uuid in installed_extensions,
+                    available_extensions.values(),
+                ),
             ),
         )
     )
