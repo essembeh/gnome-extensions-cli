@@ -28,6 +28,7 @@ pytest-cov = "^3.0.0"
 
 [tool.poetry.scripts]
 gnome-extensions-cli = "gnome_extensions_cli.cli:run"
+gext = "gnome_extensions_cli.cli:run"
 
 [build-system]
 requires = ["poetry-core"]

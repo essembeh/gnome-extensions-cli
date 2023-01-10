@@ -27,6 +27,12 @@ class FilesystemExtensionManager(ExtensionManager):
     user_folder: Path = field(
         default=Path(expanduser("~/.local/share/gnome-shell/extensions"))
     )
+    system_folders: List[Path] = field(
+        default_factory=lambda: [
+            Path("/usr/share/gnome-shell/extensions"),
+            Path("/usr/local/share/gnome-shell/extensions"),
+        ]
+    )
 
     def get_current_shell_version(self) -> str:
         stdout = subprocess.check_output(
@@ -39,14 +45,7 @@ class FilesystemExtensionManager(ExtensionManager):
 
     def list_installed_extensions(self) -> List[InstalledExtension]:
         out = {}
-        for folder in filter(
-            Path.is_dir,
-            (
-                Path("/usr/share/gnome-shell/extensions"),
-                Path("/usr/local/share/gnome-shell/extensions"),
-                self.user_folder,
-            ),
-        ):
+        for folder in filter(Path.is_dir, self.system_folders + [self.user_folder]):
             for subfolder in sorted(folder.iterdir()):
                 metadata_file = subfolder / "metadata.json"
                 if metadata_file.is_file():

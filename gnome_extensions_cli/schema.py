@@ -35,7 +35,7 @@ class AvailableExtension(BaseModel):
     screenshot: NoneStr
     shell_version_map: Dict[str, _Version]
     version: Optional[int]
-    version_tag: NoneStr
+    version_tag: Optional[int]
     download_url: NoneStr
 
 

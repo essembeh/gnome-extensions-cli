@@ -23,7 +23,7 @@ def configure(parser: ArgumentParser):
 def print_ext(ext: InstalledExtension, enabled: bool):
     print(
         Icons.DOT_BLUE if enabled else Icons.DOT_RED,
-        f"{ext.metadata.name}",
+        Color.DEFAULT(ext.metadata.name, style="bright" if enabled else "dim"),
         f"({Color.YELLOW(ext.uuid)})",
         f"v{ext.metadata.version}" if ext.metadata.version is not None else "",
         Color.RED("/system") if ext.read_only else Color.GREEN("/user"),

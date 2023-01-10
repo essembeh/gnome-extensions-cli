@@ -15,7 +15,7 @@ Install, update and manage your Gnome Shell extensions from your terminal
 - Automatically select the compatible version to install for your Gnome Shell
 - Automatic Gnome Shell restart if needed
 - Update all your extensions with one command: `gnome-extensions-cli update`
-- You can also uninstall, enable and disable extensions and open preferences
+- You can also uninstall, enable or disable extensions and open preferences
 
 # Install
 
@@ -51,41 +51,19 @@ $ poetry shell
 
 ## List your extensions
 
-```sh
-$ gnome-extensions-cli list
-Installed extensions:
-[ ] auto-move-windows@gnome-shell-extensions.gcampax.github.com
-[X] dash-to-panel@jderose9.github.com (v37)
-[X] todo.txt@bart.libert.gmail.com (v25)
+By default, the `list` command only display the _enabled_ extensions, using `-a|--all` argument also displays _disabled_ ones.
 
-# Use verbose to see available updates
-$ gnome-extensions-cli list -v
-Installed extensions:
-[ ] auto-move-windows@gnome-shell-extensions.gcampax.github.com
-      available version: 37
-[X] dash-to-panel@jderose9.github.com (v37)
-[X] todo.txt@bart.libert.gmail.com (v25)
-```
+![gnome-extensions-cli list](images/list.png)
 
-> Note: the first `[X]` or `[ ]` indicates if the extension is enabled or not
+## Show some details about extensions
 
-You also have a `search` command to print informations from Gnome extensions website
+The `show` command fetch details from _Gnome website_ and print them.s.
 
-```sh
-$ gnome-extensions-cli search 570
-Todo.txt: todo.txt@bart.libert.gmail.com
-    url: https://extensions.gnome.org/extension/570
-    tag: 8141
-    recommended version: 25
-    installed version: 25
-    available versions:
-      version 30 for Gnome Shell 3.36
-      version 29 for Gnome Shell 3.34
-      version 28 for Gnome Shell 3.32
-      [...]
-```
+![gnome-extensions-cli show](images/show.png)
 
 ## Install, uninstall and update
+
+![gnome-extensions-cli install](images/install.gif)
 
 ```sh
 # Install extension by its UUID
@@ -95,59 +73,53 @@ $ gnome-extensions-cli install dash-to-panel@jderose9.github.com
 $ gnome-extensions-cli install 1160
 
 # You can also install multiple extensions at once
-$ gnome-extensions-cli install 1160 570
+$ gnome-extensions-cli install 1160 todo.txt@bart.libert.gmail.com
 
 # Uninstall extensions
 $ gnome-extensions-cli uninstall todo.txt@bart.libert.gmail.com
-# ... or use extension number
-$ gnome-extensions-cli uninstall 570
 
 # You can enable and disable extensions
-$ gnome-extensions-cli disable todo.txt@bart.libert.gmail.com dash-to-panel@jderose9.github.com
 $ gnome-extensions-cli enable todo.txt@bart.libert.gmail.com
-# equivalent to
-$ gnome-extensions-cli disable 570 1160
-$ gnome-extensions-cli enable 570
+$ gnome-extensions-cli disable todo.txt@bart.libert.gmail.com dash-to-panel@jderose9.github.com
 ```
 
-The `update` command by default updates only the _enabled_ extensions, use `--all/-a` to also update disabled extensions
+The `update` command without arguments updates all _enabled_ extensions.
+You can also `update` a specific extension by giving its _uuid_.
 
-```sh
-# Update all enabled extensions
-$ gnome-extensions-cli update
+![gnome-extensions-cli update](images/update.gif)
 
-# Update only given extensions
-$ gnome-extensions-cli update dash-to-panel@jderose9.github.com
-# ... or use extension number
-$ gnome-extensions-cli update 1160
-```
+> Note: the `--install` argument allow you to _install_ extensions given to `update` command if they are not installed.
 
-## Backends: DBus vs File
+## Backends: DBus vs Filesystem
 
-`gnome-extensions-cli` can interact with Gnome Shell using two different implementations, using `dbus` or using a `file` based way:
+`gnome-extensions-cli` can interact with Gnome Shell using two different implementations, using `dbus` or using a `filesystem` operations:
 
-> By default, it uses `dbus` which is the safest way ;)
+> Note: By default, it uses `dbus` (as it is the official way), but switches to `filesystem` if `dbus` is not available)
 
-### DBus
+### DBus backend
 
-Using `--backend dbus`, the application uses _dbus_ messages to communicate with Gnome Shell directly.
+Using `--dbus`, the application uses _dbus_ messages to communicate with Gnome Shell directly.
 
 Pros:
 
 - You are using the exact same way to install extensions as the Firefox addon
 - Automatically restart the Gnome Shell when needed
 - Very stable
-- You can open the extension preference dialog with `gnome-extensions-cli edit EXTENSION1_UUID`
-  Cons:
-- Installations are interactive, you are prompted with e Gnome Yes/No dialog before installing the extensions, so you need to have a running Gnome sessions
+- You can open the extension preference dialog with `gnome-extensions-cli edit EXTENSION_UUID`
 
-### File
+Cons:
 
-Using `--backend dbus`, the application uses unzip packages from [Gnome website](https://extensions.gnome.org) directly in you `~/.local/share/gnome-shell/extensions/` folder, enable/disable them and restarting the Gnome Shell using subprocesses.
+- Installations are interactive, you are prompted with a Gnome _Yes/No_ dialog before installing the extensions, so you need to have a running Gnome session
+
+### Filesystem backend
+
+Using `--filesystem`, the application uses unzip packages from [Gnome website](https://extensions.gnome.org) directly in you `~/.local/share/gnome-shell/extensions/` folder, enable/disable them and restarting the Gnome Shell using subprocesses.
 
 Pros:
 
-- You can install extensions without any Gnome session running
+- You can install extensions without any Gnome session running (usign _ssh_ for example)
 - Many `gnome-extensions-cli` alternatives use this method ... but
-  Cons:
+
+Cons:
+
 - Some extensions are not installed well

@@ -1,14 +1,28 @@
 from operator import itemgetter
 from pathlib import Path
+from traceback import print_exc
 from typing import List
-
-from gi.repository import Gio
 
 from .manager import ExtensionManager
 from .schema import AvailableExtension, InstalledExtension
 
 DBUS_INTERFACE = "org.gnome.Shell"
 DBUS_PATH = "/org/gnome/Shell"
+
+
+def test_dbus_available(debug: bool = False) -> bool:
+    """
+    Test if DBus is available
+    """
+    try:
+        from gi.repository import Gio  # pylint: disable=import-outside-toplevel
+
+        dbus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+        return dbus is not None
+    except BaseException:  # pylint: disable=broad-except
+        if debug:
+            print_exc()
+        return False
 
 
 class DbusExtensionManager(ExtensionManager):
@@ -19,6 +33,8 @@ class DbusExtensionManager(ExtensionManager):
     """
 
     def __init__(self):
+        from gi.repository import Gio  # pylint: disable=import-outside-toplevel
+
         dbus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
         self.proxy_extensions = Gio.DBusProxy.new_sync(
             dbus,

@@ -2,8 +2,7 @@
 command line interface
 """
 from argparse import ArgumentParser
-
-from gi.repository import GLib
+from os import getenv
 
 from . import __version__
 from .commands import (
@@ -12,11 +11,11 @@ from .commands import (
     install,
     list_,
     preferences,
-    search,
+    show,
     uninstall,
     update,
 )
-from .dbus import DbusExtensionManager
+from .dbus import DbusExtensionManager, test_dbus_available
 from .filesystem import FilesystemExtensionManager
 from .icons import Color, Icons
 from .store import GnomeExtensionStore
@@ -64,8 +63,10 @@ def run():
     disable.configure(
         subparsers.add_parser("disable", aliases=[], help="disable extensions")
     )
-    search.configure(
-        subparsers.add_parser("search", aliases=[], help="search extensions")
+    show.configure(
+        subparsers.add_parser(
+            "show", aliases=["search"], help="show extensions details"
+        )
     )
     update.configure(
         subparsers.add_parser("update", aliases=["u"], help="update extensions")
@@ -93,13 +94,10 @@ def run():
             manager = DbusExtensionManager()
         elif args.backend == "filesystem":
             manager = FilesystemExtensionManager(store)
+        elif test_dbus_available(getenv("DEBUG") == "1"):
+            manager = DbusExtensionManager()
         else:
-            try:
-                manager = DbusExtensionManager()
-            except GLib.Error:
-                manager = FilesystemExtensionManager(store)
-        assert manager is not None
-
+            manager = FilesystemExtensionManager(store)
         handler = args.handler if "handler" in args else list_.run
         handler(args, manager, store)
     except KeyboardInterrupt:
