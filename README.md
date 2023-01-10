@@ -31,6 +31,12 @@ Install latest version from the repository
 $ pip3 install --upgrade git+https://github.com/essembeh/gnome-extensions-cli
 ```
 
+Install with [pipx](https://github.com/pypa/pipx)
+
+```sh
+$ pipx install gnome-extensions-cli --system-site-packages
+```
+
 Or setup a development environment
 
 ```sh
