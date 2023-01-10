@@ -1,31 +1,41 @@
-import subprocess
-import sys
-from distutils.version import LooseVersion
-from re import fullmatch
+from typing import Any, Optional
+
+from packaging.version import Version
 
 
-def get_shell_version():
-    try:
-        for line in (
-            subprocess.check_output(["gnome-shell", "--version"]).decode().splitlines()
-        ):
-            m = fullmatch(r"GNOME Shell (?P<version>[0-9.]+)", line)
-            if m:
-                return m.group("version")
-    except BaseException:
-        print("Warning, cannot retrieve current Gnome Shell version", file=sys.stderr)
-
-
-def version_comparator(a, b):
-    if a == b:
+def version_comparator(left: Any, right: Any) -> int:
+    """
+    Compare two versions by handling None, integer or strings
+    """
+    if left == right:
         return 0
-    if a is None:
+    if left is None:
         return 1
-    if b is None:
+    if right is None:
         return -1
-    a, b = LooseVersion(str(a)), LooseVersion(str(b))
-    if a < b:
+    vleft, vright = Version(str(left)), Version(str(right))
+    if vleft < vright:
         return 1
-    if a > b:
+    if vleft > vright:
         return -1
     return 0
+
+
+def confirm(message: str, default: Optional[bool] = None) -> bool:
+    """
+    Simple interactive confirmation
+    """
+    while True:
+        answer = input(
+            f"💬  {message} ["
+            + ("Y" if default is True else "y")
+            + "/"
+            + ("N" if default is False else "n")
+            + "] "
+        )
+        if answer == "" and default is not None:
+            return default
+        if answer.lower() == "y":
+            return True
+        if answer.lower() == "n":
+            return False
