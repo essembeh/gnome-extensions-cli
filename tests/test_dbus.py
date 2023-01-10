@@ -1,6 +1,9 @@
-from gnome_extensions_cli.dbus import DbusExtensionManager
+import pytest
+
+from gnome_extensions_cli.dbus import DbusExtensionManager, test_dbus_available
 
 
+@pytest.mark.skipif(not test_dbus_available(True), reason="DBus is not available")
 def test_dbus():
     manager = DbusExtensionManager()
 

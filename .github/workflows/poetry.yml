@@ -1,0 +1,43 @@
+name: Build & Tests
+
+on: [push]
+
+jobs:
+  test:
+    name: Build and test App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -qy --no-install-recommends gnome-shell-extensions
+          sudo apt install -qy libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0
+      - name: Install poetry
+        run: pip install poetry
+      - name: Build app
+        run: poetry build
+      - name: Test app
+        run: |
+          poetry install
+          poetry run pytest --cov=gnome_extensions_cli tests/
+
+  publish:
+    name: Publish App on PyPI
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install poetry
+        run: pip install poetry
+      - name: Publish app
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: poetry publish --build --username "__token__" --password "$PYPI_TOKEN"

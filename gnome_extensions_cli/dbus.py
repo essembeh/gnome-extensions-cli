@@ -22,7 +22,7 @@ def test_dbus_available(debug: bool = False) -> bool:
     except BaseException:  # pylint: disable=broad-except
         if debug:
             print_exc()
-        return False
+    return False
 
 
 class DbusExtensionManager(ExtensionManager):
