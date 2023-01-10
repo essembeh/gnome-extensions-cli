@@ -22,13 +22,13 @@ Install, update and manage your Gnome Shell extensions from your terminal
 Install from [PyPI](https://pypi.org/project/gnome-extensions-cli/)
 
 ```sh
-$ pip3 install -u gnome-extensions-cli
+$ pip3 install --upgrade gnome-extensions-cli
 ```
 
 Install latest version from the repository
 
 ```sh
-$ pip3 install -u git+https://github.com/essembeh/gnome-extensions-cli
+$ pip3 install --upgrade git+https://github.com/essembeh/gnome-extensions-cli
 ```
 
 Or setup a development environment
