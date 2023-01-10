@@ -84,30 +84,28 @@ def run():
 
     args = parser.parse_args()
 
-    if "handler" not in args:
-        parser.print_usage()
-    else:
-        try:
-            # instanciate store
-            store = GnomeExtensionStore()
+    try:
+        # instanciate store
+        store = GnomeExtensionStore()
 
-            # instanciate manager
-            manager = None
-            if args.backend == "dbus":
+        # instanciate manager
+        manager = None
+        if args.backend == "dbus":
+            manager = DbusExtensionManager()
+        elif args.backend == "filesystem":
+            manager = FilesystemExtensionManager(store)
+        else:
+            try:
                 manager = DbusExtensionManager()
-            elif args.backend == "filesystem":
+            except GLib.Error:
                 manager = FilesystemExtensionManager(store)
-            else:
-                try:
-                    manager = DbusExtensionManager()
-                except GLib.Error:
-                    manager = FilesystemExtensionManager(store)
-            assert manager is not None
+        assert manager is not None
 
-            args.handler(args, manager, store)
-        except KeyboardInterrupt:
-            print(f"{Icons.ERROR} Process interrupted")
-            exit(1)
-        except BaseException as error:  # pylint: disable=broad-except
-            print(f"{Icons.BOOM} Error: {Fore.RED}{error}{Fore.RESET}")
-            raise error
+        handler = args.handler if "handler" in args else list_.run
+        handler(args, manager, store)
+    except KeyboardInterrupt:
+        print(f"{Icons.ERROR} Process interrupted")
+        exit(1)
+    except BaseException as error:  # pylint: disable=broad-except
+        print(f"{Icons.BOOM} Error: {Fore.RED}{error}{Fore.RESET}")
+        raise error

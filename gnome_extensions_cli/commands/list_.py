@@ -35,7 +35,10 @@ def print_ext(ext: InstalledExtension, enabled: bool):
 
 
 def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore):
-    if args.verbose:
+    verbose = "verbose" in args and args.verbose
+    show_all = "all" in args and args.all
+
+    if verbose:
         print("Gnome Shell", manager.get_current_shell_version())
 
     extensions = sorted(
@@ -47,7 +50,7 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
         if ext.uuid in enabled_uuids:
             print_ext(ext, True)
 
-    if args.all:
+    if show_all:
         for ext in extensions:
             if ext.uuid not in enabled_uuids:
                 print_ext(ext, False)
