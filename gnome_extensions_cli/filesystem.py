@@ -104,7 +104,7 @@ class FilesystemExtensionManager(ExtensionManager):
         print("Remove folder", Label.folder(ext.folder))
 
     def edit_extension(self, ext: InstalledExtension):
-        raise NotImplementedError()
+        self._run(["gnome-extensions-app"])
 
     def list_enabled_uuids(self) -> List[str]:
         stdout = subprocess.check_output(
