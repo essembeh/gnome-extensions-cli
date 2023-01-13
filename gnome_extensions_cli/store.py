@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from typing import Optional, Union
+from itertools import count
+from typing import Iterable, Optional, Union
 
 import requests
 
-from .schema import AvailableExtension
+from .schema import AvailableExtension, Search
 
 
 @dataclass
@@ -64,3 +65,28 @@ class GnomeExtensionStore:
             return None
         resp.raise_for_status()
         return AvailableExtension.parse_raw(resp.content)
+
+    def search(
+        self, motif: str, shell_version: str = "all", limit: int = 0
+    ) -> Iterable[AvailableExtension]:
+        """
+        Search for extensions
+        """
+        params = {"search": motif, "shell_version": shell_version, "page": 1}
+        count = 0
+        while True:
+            resp = requests.get(
+                f"{self.url}/extension-query/",
+                params=params,
+                timeout=self.timeout,
+            )
+            resp.raise_for_status()
+            data = Search.parse_raw(resp.content)
+            for ext in data.extensions:
+                yield ext
+                count += 1
+                if 0 < limit <= count:
+                    return
+            if params["page"] >= data.numpages:
+                break
+            params["page"] += 1

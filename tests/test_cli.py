@@ -31,14 +31,15 @@ def assert_no_error(
 
 def test_help(capsys):
     assert_no_error(*run(capsys, "--help"))
-    assert_no_error(*run(capsys, "list --help"))
-    assert_no_error(*run(capsys, "show --help"))
-    assert_no_error(*run(capsys, "install --help"))
-    assert_no_error(*run(capsys, "update --help"))
-    assert_no_error(*run(capsys, "uninstall --help"))
-    assert_no_error(*run(capsys, "enable --help"))
     assert_no_error(*run(capsys, "disable --help"))
+    assert_no_error(*run(capsys, "enable --help"))
+    assert_no_error(*run(capsys, "install --help"))
+    assert_no_error(*run(capsys, "list --help"))
     assert_no_error(*run(capsys, "preferences --help"))
+    assert_no_error(*run(capsys, "search --help"))
+    assert_no_error(*run(capsys, "show --help"))
+    assert_no_error(*run(capsys, "uninstall --help"))
+    assert_no_error(*run(capsys, "update --help"))
 
 
 def test_version(capsys):

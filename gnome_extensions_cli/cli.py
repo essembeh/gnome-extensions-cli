@@ -11,6 +11,7 @@ from .commands import (
     install,
     list_,
     preferences,
+    search,
     show,
     uninstall,
     update,
@@ -65,10 +66,11 @@ def run():
     disable.configure(
         subparsers.add_parser("disable", aliases=[], help="disable extensions")
     )
+    search.configure(
+        subparsers.add_parser("search", aliases=[], help="search for extensions")
+    )
     show.configure(
-        subparsers.add_parser(
-            "show", aliases=["search"], help="show extensions details"
-        )
+        subparsers.add_parser("show", aliases=[], help="show extensions details")
     )
     update.configure(
         subparsers.add_parser("update", aliases=["u"], help="update extensions")

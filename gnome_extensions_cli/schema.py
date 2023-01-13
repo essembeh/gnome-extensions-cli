@@ -39,6 +39,12 @@ class AvailableExtension(BaseModel):
     download_url: NoneStr
 
 
+class Search(BaseModel):
+    extensions: List[AvailableExtension]
+    total: int
+    numpages: int
+
+
 @dataclass
 class InstalledExtension:
     folder: Path
