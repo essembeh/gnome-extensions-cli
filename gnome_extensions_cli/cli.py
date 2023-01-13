@@ -109,6 +109,8 @@ def run():
     except KeyboardInterrupt:
         print(Icons.ERROR, "Process interrupted")
         sys.exit(1)
+    except SystemExit:
+        raise
     except BaseException as error:  # pylint: disable=broad-except
         print(Icons.BOOM, "Error:", Color.RED(error))
         raise error

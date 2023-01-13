@@ -21,11 +21,19 @@ def configure(parser: ArgumentParser):
         action="store_true",
         help="install extension if not installed",
     )
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "-y",
         "--yes",
         action="store_true",
         help="do not prompt confirmation for update/install",
+    )
+    group.add_argument(
+        "-n",
+        "--dry-run",
+        action="store_true",
+        help="do not update nor install anything, "
+        + "a return code 17 is returned if updates are available",
     )
     parser.add_argument(
         "--user",
@@ -107,6 +115,10 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
             print(Icons.PACKAGE, "Extensions to install:")
             for ext in extensions_to_install:
                 print("  ", Color.YELLOW(ext.uuid))
+
+        if args.dry_run:
+            # in dryrun mode, exit 17
+            raise SystemExit(17)
 
         if args.yes or confirm("Continue?", default=True):
             for available_extension in extensions_to_update:
