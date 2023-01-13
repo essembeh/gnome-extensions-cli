@@ -1,10 +1,14 @@
+"""
+gnome-extensions-cli
+"""
+
 from enum import Enum
 from pathlib import Path
 from typing import Any, Optional
 
 from colorama import Back, Fore, Style
 
-from gnome_extensions_cli.schema import AvailableExtension, InstalledExtension
+from .schema import AvailableExtension, InstalledExtension
 
 
 class Icons(Enum):
@@ -56,6 +60,9 @@ def color(
 
 
 class Color(Enum):
+    """
+    Utility tool to use colorama colors
+    """
 
     DEFAULT = None
     BLACK = Fore.BLACK
@@ -85,6 +92,10 @@ class Color(Enum):
 
 
 class Label:
+    """
+    __str__ builder for common types
+    """
+
     @staticmethod
     def uuid(uuid: str) -> str:
         return f"({Color.YELLOW(uuid)})"
@@ -99,7 +110,16 @@ class Label:
 
     @staticmethod
     def available(ext: AvailableExtension) -> str:
-        return f"{Color.DEFAULT(ext.name, style='bright')} {Label.uuid(ext.uuid)} {Label.version(ext.version) or ''}"
+        return " ".join(
+            filter(
+                None,
+                [
+                    Color.DEFAULT(ext.name, style="bright"),
+                    Label.uuid(ext.uuid),
+                    Label.version(ext.version),
+                ],
+            )
+        )
 
     @staticmethod
     def installed(ext: InstalledExtension, enabled: Optional[bool] = None) -> str:

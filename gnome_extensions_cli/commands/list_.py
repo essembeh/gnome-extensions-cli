@@ -1,3 +1,7 @@
+"""
+gnome-extensions-cli
+"""
+
 from argparse import ArgumentParser, Namespace
 
 from ..icons import Icons, Label
@@ -6,6 +10,9 @@ from ..store import GnomeExtensionStore
 
 
 def configure(parser: ArgumentParser):
+    """
+    Configure parser for subcommand
+    """
     parser.set_defaults(handler=run)
 
     parser.add_argument(
@@ -20,6 +27,9 @@ def configure(parser: ArgumentParser):
 
 
 def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore):
+    """
+    Handler for subcommand
+    """
     verbose = "verbose" in args and args.verbose
     show_all = "all" in args and args.all
 

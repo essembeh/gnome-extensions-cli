@@ -1,3 +1,7 @@
+"""
+gnome-extensions-cli
+"""
+
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
 
 from ..icons import Color, Icons, Label
@@ -6,6 +10,9 @@ from ..store import GnomeExtensionStore
 
 
 def configure(parser: ArgumentParser):
+    """
+    Configure parser for subcommand
+    """
     parser.set_defaults(handler=run)
 
     parser.add_argument(
@@ -17,6 +24,9 @@ def configure(parser: ArgumentParser):
 
 
 def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
+    """
+    Handler for subcommand
+    """
     installed_extensions = {e.uuid: e for e in manager.list_installed_extensions()}
     shell_version = manager.get_current_shell_version()
 

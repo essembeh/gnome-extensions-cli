@@ -1,6 +1,10 @@
+"""
+gnome-extensions-cli
+"""
+
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from typing import Iterable, List, Optional, Tuple, Union
+from typing import Iterable, Optional, Tuple, Union
 
 import requests
 

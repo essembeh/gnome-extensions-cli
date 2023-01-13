@@ -1,6 +1,8 @@
 """
-command line interface
+gnome-extensions-cli
 """
+
+import sys
 from argparse import ArgumentParser
 from os import getenv
 
@@ -106,7 +108,7 @@ def run():
         handler(args, manager, store)
     except KeyboardInterrupt:
         print(Icons.ERROR, "Process interrupted")
-        exit(1)
+        sys.exit(1)
     except BaseException as error:  # pylint: disable=broad-except
         print(Icons.BOOM, "Error:", Color.RED(error))
         raise error

@@ -1,3 +1,7 @@
+"""
+gnome-extensions-cli
+"""
+
 from operator import itemgetter
 from pathlib import Path
 from traceback import print_exc

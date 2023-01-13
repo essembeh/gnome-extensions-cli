@@ -1,3 +1,7 @@
+"""
+gnome-extensions-cli
+"""
+
 from typing import Any, Optional
 
 from packaging.version import Version

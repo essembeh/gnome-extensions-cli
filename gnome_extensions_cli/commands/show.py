@@ -1,3 +1,7 @@
+"""
+gnome-extensions-cli
+"""
+
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
 from typing import Any, Dict, List, Optional
 
@@ -11,6 +15,9 @@ INDENT = "  "
 
 
 def configure(parser: ArgumentParser):
+    """
+    Configure parser for subcommand
+    """
     parser.set_defaults(handler=run)
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="display more informations"
@@ -24,6 +31,9 @@ def configure(parser: ArgumentParser):
 
 
 def print_key_value(key: str, value: Optional[Any], indent: int = 0):
+    """
+    Print a key-value pair, handling indentation, formatting and colors
+    """
     if value is not None:
         if isinstance(value, str) and "\n" in value:
             prefix = INDENT * (indent + 2)
@@ -37,6 +47,9 @@ def print_key_value(key: str, value: Optional[Any], indent: int = 0):
 
 
 def build_versions_dict(ext: AvailableExtension) -> Dict[int, List[str]]:
+    """
+    Build a disctionnary of supported Gnome Shell version per app version
+    """
     out = {}
     for shell_version, app in ext.shell_version_map.items():
         app_version = app.version
@@ -47,6 +60,9 @@ def build_versions_dict(ext: AvailableExtension) -> Dict[int, List[str]]:
 
 
 def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
+    """
+    Handler for subcommand
+    """
     installed_extensions = {e.uuid: e for e in manager.list_installed_extensions()}
 
     shell_version = manager.get_current_shell_version()

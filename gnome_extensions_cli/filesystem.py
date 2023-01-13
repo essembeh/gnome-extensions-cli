@@ -1,3 +1,7 @@
+"""
+gnome-extensions-cli
+"""
+
 import subprocess
 import sys
 from dataclasses import dataclass, field
