@@ -1,0 +1,504 @@
+{
+    "extensions": [
+        {
+            "uuid": "todolist@bsaleil.org",
+            "name": "Todo list",
+            "creator": "bsaleil",
+            "creator_url": "/accounts/profile/bsaleil",
+            "pk": 162,
+            "description": "Simple todo list extension. You can add and remove tasks on your list.",
+            "link": "/extension/162/todo-list/",
+            "icon": "/extension-data/icons/icon_162_1.png",
+            "screenshot": "/extension-data/screenshots/screenshot_162_1.png",
+            "shell_version_map": {
+                "3.2.1": {
+                    "pk": 622,
+                    "version": 4
+                },
+                "3.2": {
+                    "pk": 726,
+                    "version": 7
+                },
+                "3.3.4": {
+                    "pk": 726,
+                    "version": 7
+                },
+                "3.3.5": {
+                    "pk": 726,
+                    "version": 7
+                },
+                "3.4": {
+                    "pk": 1319,
+                    "version": 9
+                },
+                "3.6": {
+                    "pk": 2390,
+                    "version": 11
+                },
+                "3.8": {
+                    "pk": 3233,
+                    "version": 12
+                },
+                "3.10": {
+                    "pk": 3569,
+                    "version": 13
+                },
+                "3.14": {
+                    "pk": 4703,
+                    "version": 14
+                },
+                "3.32": {
+                    "pk": 9898,
+                    "version": 15
+                }
+            }
+        },
+        {
+            "uuid": "todo_mail_UHA@vdebian",
+            "name": "todo mail UHA",
+            "creator": "projet_UHA",
+            "creator_url": "/accounts/profile/projet_UHA",
+            "pk": 778,
+            "description": "You can quickly and easily send a mail via the taskbar GNOME.",
+            "link": "/extension/778/todo-mail-uha/",
+            "icon": "/static/images/plugin.png",
+            "screenshot": "/extension-data/screenshots/screenshot_778_1.png",
+            "shell_version_map": {
+                "3.8": {
+                    "pk": 3641,
+                    "version": 1
+                }
+            }
+        },
+        {
+            "uuid": "todolist@tomMoral.org",
+            "name": "Section Todo List",
+            "creator": "tomMoral",
+            "creator_url": "/accounts/profile/tomMoral",
+            "pk": 1104,
+            "description": "Manage todo list with an applet\n\n* Add and remove task on your list in different sections.\n* Click an item to rename it.\n* Access the extension using Hot-Key (default: Ctrl+Space)\n\n**Note:** I don't come on this page often so if you need any help, please refer to the github repo and open an issue :) ",
+            "link": "/extension/1104/section-todo-list/",
+            "icon": "/static/images/plugin.png",
+            "screenshot": "/extension-data/screenshots/screenshot_1104_0EguKVW.png",
+            "shell_version_map": {
+                "3.18": {
+                    "pk": 8308,
+                    "version": 6
+                },
+                "3.20": {
+                    "pk": 8308,
+                    "version": 6
+                },
+                "3.22": {
+                    "pk": 8427,
+                    "version": 8
+                },
+                "3.24": {
+                    "pk": 10921,
+                    "version": 9
+                },
+                "3.26": {
+                    "pk": 10921,
+                    "version": 9
+                },
+                "3.28": {
+                    "pk": 10921,
+                    "version": 9
+                },
+                "3.30": {
+                    "pk": 14156,
+                    "version": 10
+                },
+                "3.32": {
+                    "pk": 36189,
+                    "version": 13
+                },
+                "3.34": {
+                    "pk": 36189,
+                    "version": 13
+                },
+                "3.36": {
+                    "pk": 36189,
+                    "version": 13
+                },
+                "3.38": {
+                    "pk": 36189,
+                    "version": 13
+                },
+                "40": {
+                    "pk": 36189,
+                    "version": 13
+                },
+                "42": {
+                    "pk": 36189,
+                    "version": 13
+                },
+                "43": {
+                    "pk": 36189,
+                    "version": 13
+                }
+            }
+        },
+        {
+            "uuid": "todo.txt@bart.libert.gmail.com",
+            "name": "Todo.txt",
+            "creator": "BartL",
+            "creator_url": "/accounts/profile/BartL",
+            "pk": 570,
+            "description": "A Gnome shell interface for todo.txt. \n\nTodo.txt is a future-proof syntax for tasks (not made by me), for more info: http://todotxt.com/\n\nSome examples:\nTask: Basic task\n(A) Task: High priority task\nTask @project +context: Task is part of project and has a certain context\nx 2013-08-22 Task: Task was completed on the 22nd of August\n\nFor more info about the syntax: https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format\n\nQuick start:\nWhen you first enable the extension, chances are high you'll see a [X] in your top panel. If you click the [X], you will be able to choose between creating the necessary files automatically or selecting your own existing files to be used with the extension.\n\nPlease use the issue tracker on the homepage to report bugs and/or file feature requests, this makes tracking easier for me. Thanks!\n\nSee the included CHANGELOG.md for info about changes between different versions, or see it online: https://gitlab.com/todo.txt-gnome-shell-extension/todo-txt-gnome-shell-extension/-/blob/master/CHANGELOG.md",
+            "link": "/extension/570/todotxt/",
+            "icon": "/static/images/plugin.png",
+            "screenshot": "/extension-data/screenshots/screenshot_570_5X5YkZb.png",
+            "shell_version_map": {
+                "3.4": {
+                    "pk": 6238,
+                    "version": 21
+                },
+                "3.6": {
+                    "pk": 6238,
+                    "version": 21
+                },
+                "3.8": {
+                    "pk": 6238,
+                    "version": 21
+                },
+                "3.10": {
+                    "pk": 8141,
+                    "version": 25
+                },
+                "3.12": {
+                    "pk": 8141,
+                    "version": 25
+                },
+                "3.14": {
+                    "pk": 8141,
+                    "version": 25
+                },
+                "3.16": {
+                    "pk": 8141,
+                    "version": 25
+                },
+                "3.18": {
+                    "pk": 8141,
+                    "version": 25
+                },
+                "3.20": {
+                    "pk": 8141,
+                    "version": 25
+                },
+                "3.22": {
+                    "pk": 8141,
+                    "version": 25
+                },
+                "3.24": {
+                    "pk": 8141,
+                    "version": 25
+                },
+                "3.26": {
+                    "pk": 8141,
+                    "version": 25
+                },
+                "3.28": {
+                    "pk": 8141,
+                    "version": 25
+                },
+                "3.32": {
+                    "pk": 11240,
+                    "version": 28
+                },
+                "3.34": {
+                    "pk": 13591,
+                    "version": 29
+                },
+                "3.36": {
+                    "pk": 19473,
+                    "version": 33
+                },
+                "3.38": {
+                    "pk": 19473,
+                    "version": 33
+                },
+                "40.0": {
+                    "pk": 22868,
+                    "version": 34
+                },
+                "40": {
+                    "pk": 26250,
+                    "version": 35
+                },
+                "41": {
+                    "pk": 30207,
+                    "version": 37
+                },
+                "42": {
+                    "pk": 30207,
+                    "version": 37
+                },
+                "43": {
+                    "pk": 36826,
+                    "version": 39
+                }
+            }
+        },
+        {
+            "uuid": "timepp@zagortenay333",
+            "name": "Time ++",
+            "creator": "zagortenay33",
+            "creator_url": "/accounts/profile/zagortenay33",
+            "pk": 1238,
+            "description": "A todo.txt manager, time tracker, timer, stopwatch, pomodoro, and alarm clock",
+            "link": "/extension/1238/time/",
+            "icon": "/extension-data/icons/icon_1238_etkhURE.png",
+            "screenshot": "/extension-data/screenshots/screenshot_1238_VF4lJwP.png",
+            "shell_version_map": {
+                "3.24": {
+                    "pk": 8671,
+                    "version": 145
+                },
+                "3.26": {
+                    "pk": 8671,
+                    "version": 145
+                },
+                "3.28": {
+                    "pk": 8671,
+                    "version": 145
+                },
+                "3.30": {
+                    "pk": 8671,
+                    "version": 145
+                },
+                "3.32": {
+                    "pk": 9874,
+                    "version": 149
+                },
+                "3.34": {
+                    "pk": 14591,
+                    "version": 152
+                },
+                "3.36": {
+                    "pk": 20574,
+                    "version": 155
+                },
+                "3.38": {
+                    "pk": 20574,
+                    "version": 155
+                },
+                "40": {
+                    "pk": 28972,
+                    "version": 163
+                },
+                "41": {
+                    "pk": 28972,
+                    "version": 163
+                },
+                "42": {
+                    "pk": 33529,
+                    "version": 165
+                }
+            }
+        },
+        {
+            "uuid": "rayday@jaypy.ir",
+            "name": "Rayday",
+            "creator": "jaypy",
+            "creator_url": "/accounts/profile/jaypy",
+            "pk": 4150,
+            "description": "Rayday is a small CRM to manage your todos , deadlines and etc...",
+            "link": "/extension/4150/rayday/",
+            "icon": "/static/images/plugin.png",
+            "screenshot": "/extension-data/screenshots/screenshot_4150_1RAoD0D.png",
+            "shell_version_map": {
+                "3.36": {
+                    "pk": 23482,
+                    "version": 1
+                }
+            }
+        },
+        {
+            "uuid": "gnome-shell-Google-search-provider@MrNinso",
+            "name": "Google Search Provider",
+            "creator": "ninso",
+            "creator_url": "/accounts/profile/ninso",
+            "pk": 4132,
+            "description": "Add Google search to Gnome Shell Search \n TODO: \n - Add google suggestions (For now using duckduckGo suggestions)",
+            "link": "/extension/4132/google-search-provider/",
+            "icon": "/static/images/plugin.png",
+            "screenshot": "/extension-data/screenshots/screenshot_4132.png",
+            "shell_version_map": {
+                "3.36": {
+                    "pk": 28657,
+                    "version": 6
+                },
+                "3.38": {
+                    "pk": 28657,
+                    "version": 6
+                },
+                "40.0": {
+                    "pk": 23583,
+                    "version": 4
+                },
+                "40": {
+                    "pk": 28657,
+                    "version": 6
+                },
+                "41": {
+                    "pk": 28657,
+                    "version": 6
+                }
+            }
+        },
+        {
+            "uuid": "battery-power-statistics-shortcut@l300lvl.co.nr",
+            "name": "Battery Power Statistics Shortcut",
+            "creator": "l300lvl",
+            "creator_url": "/accounts/profile/l300lvl",
+            "pk": 175,
+            "description": "Adds a shortcut to open Power Statistics from the battery indicator. Incredibly useful for laptop users. Now compatible with the system-monitor extension http://tinyurl.com/sysmon Depends on: gnome-power-statistics todo:rework placement",
+            "link": "/extension/175/battery-power-statistics-shortcut/",
+            "icon": "/extension-data/icons/icon_175.png",
+            "screenshot": "/extension-data/screenshots/screenshot_175_1.png",
+            "shell_version_map": {
+                "3.2": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.2.0": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.2.1": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.4": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.6": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.5.4": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.8": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.10": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.12": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.14": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.16": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.15.91": {
+                    "pk": 4746,
+                    "version": 9
+                },
+                "3.15.92": {
+                    "pk": 4746,
+                    "version": 9
+                }
+            }
+        },
+        {
+            "uuid": "overview-on-startup@atz3.yahoo.com",
+            "name": "Overview On Startup",
+            "creator": "l300lvl",
+            "creator_url": "/accounts/profile/l300lvl",
+            "pk": 658,
+            "description": "A simple extension with a primary task of launching the Overview at each start of Gnome Shell, e.g on login. Influenced by @gevera, the Applications/Frequent view is default, but has an option to show the Windows view. \n\ntodo: timeout option, eventually show the Overview when no windows are open or none are in focus, regardless of workspace/s and settings",
+            "link": "/extension/658/overview-on-startup/",
+            "icon": "/extension-data/icons/icon_658.png",
+            "screenshot": "/extension-data/screenshots/screenshot_658.png",
+            "shell_version_map": {
+                "3.2": {
+                    "pk": 2793,
+                    "version": 1
+                },
+                "3.2.0": {
+                    "pk": 2793,
+                    "version": 1
+                },
+                "3.2.1": {
+                    "pk": 2793,
+                    "version": 1
+                },
+                "3.4": {
+                    "pk": 2873,
+                    "version": 6
+                },
+                "3.6": {
+                    "pk": 2873,
+                    "version": 6
+                },
+                "3.5.4": {
+                    "pk": 2873,
+                    "version": 6
+                },
+                "3.8": {
+                    "pk": 2873,
+                    "version": 6
+                }
+            }
+        },
+        {
+            "uuid": "Analog_Clock@l300lvl.co.nr",
+            "name": "Analog Neon Clock",
+            "creator": "l300lvl",
+            "creator_url": "/accounts/profile/l300lvl",
+            "pk": 163,
+            "description": "Replace digital clock with Analog Neon Clock for &gt;3.4. Replaces the normal time/date but not the calender. Placement preference now available(except 3.8). Colors can be changed via css, for now I added color notes in the css, a preference to change themes will come soon.\n\nTodo: placement bug, Allow keeping time/date, add time to menu, color/size/thickness prefs/seconds optional. Major credit on the work of this fork goes to https://extensions.gnome.org/accounts/profile/mathematical.coffee Fork based on original work by \"obneq\" https://github.com/obneq/",
+            "link": "/extension/163/analog-clock/",
+            "icon": "/extension-data/icons/icon_163_1.png",
+            "screenshot": "/extension-data/screenshots/screenshot_163.png",
+            "shell_version_map": {
+                "3.4": {
+                    "pk": 2684,
+                    "version": 6
+                },
+                "3.6": {
+                    "pk": 2684,
+                    "version": 6
+                },
+                "3.6.2": {
+                    "pk": 2684,
+                    "version": 6
+                },
+                "3.8": {
+                    "pk": 2808,
+                    "version": 7
+                },
+                "3.9.1": {
+                    "pk": 3165,
+                    "version": 8
+                },
+                "3.9.3": {
+                    "pk": 3165,
+                    "version": 8
+                },
+                "3.9.5": {
+                    "pk": 3165,
+                    "version": 8
+                },
+                "3.10": {
+                    "pk": 3259,
+                    "version": 9
+                }
+            }
+        }
+    ],
+    "total": 10,
+    "numpages": 2
+}

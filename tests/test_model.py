@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from gnome_extensions_cli.schema import Metadata
+from gnome_extensions_cli.schema import AvailableExtension, Metadata, Search
 from gnome_extensions_cli.utils import version_comparator
 
 
@@ -32,3 +32,13 @@ def test_schema():
             if metadata_file.exists():
                 metadata = Metadata.parse_file(metadata_file)
                 assert metadata is not None
+
+
+def test_samples():
+    samples_dir = Path(__file__).parent / "samples"
+    assert samples_dir.is_dir()
+
+    assert AvailableExtension.parse_file(samples_dir / "available.json") is not None
+    assert AvailableExtension.parse_file(samples_dir / "available-alt.json") is not None
+    assert Metadata.parse_file(samples_dir / "installed.json") is not None
+    assert Search.parse_file(samples_dir / "search.json") is not None

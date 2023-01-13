@@ -1,0 +1,104 @@
+{
+    "uuid": "todo.txt@bart.libert.gmail.com",
+    "name": "Todo.txt",
+    "creator": "BartL",
+    "creator_url": "/accounts/profile/BartL",
+    "pk": 570,
+    "description": "A Gnome shell interface for todo.txt. \n\nTodo.txt is a future-proof syntax for tasks (not made by me), for more info: http://todotxt.com/\n\nSome examples:\nTask: Basic task\n(A) Task: High priority task\nTask @project +context: Task is part of project and has a certain context\nx 2013-08-22 Task: Task was completed on the 22nd of August\n\nFor more info about the syntax: https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format\n\nQuick start:\nWhen you first enable the extension, chances are high you'll see a [X] in your top panel. If you click the [X], you will be able to choose between creating the necessary files automatically or selecting your own existing files to be used with the extension.\n\nPlease use the issue tracker on the homepage to report bugs and/or file feature requests, this makes tracking easier for me. Thanks!\n\nSee the included CHANGELOG.md for info about changes between different versions, or see it online: https://gitlab.com/todo.txt-gnome-shell-extension/todo-txt-gnome-shell-extension/-/blob/master/CHANGELOG.md",
+    "link": "/extension/570/todotxt/",
+    "icon": "/static/images/plugin.png",
+    "screenshot": "/extension-data/screenshots/screenshot_570_5X5YkZb.png",
+    "shell_version_map": {
+        "3.4": {
+            "pk": 6238,
+            "version": 21
+        },
+        "3.6": {
+            "pk": 6238,
+            "version": 21
+        },
+        "3.8": {
+            "pk": 6238,
+            "version": 21
+        },
+        "3.10": {
+            "pk": 8141,
+            "version": 25
+        },
+        "3.12": {
+            "pk": 8141,
+            "version": 25
+        },
+        "3.14": {
+            "pk": 8141,
+            "version": 25
+        },
+        "3.16": {
+            "pk": 8141,
+            "version": 25
+        },
+        "3.18": {
+            "pk": 8141,
+            "version": 25
+        },
+        "3.20": {
+            "pk": 8141,
+            "version": 25
+        },
+        "3.22": {
+            "pk": 8141,
+            "version": 25
+        },
+        "3.24": {
+            "pk": 8141,
+            "version": 25
+        },
+        "3.26": {
+            "pk": 8141,
+            "version": 25
+        },
+        "3.28": {
+            "pk": 8141,
+            "version": 25
+        },
+        "3.32": {
+            "pk": 11240,
+            "version": 28
+        },
+        "3.34": {
+            "pk": 13591,
+            "version": 29
+        },
+        "3.36": {
+            "pk": 19473,
+            "version": 33
+        },
+        "3.38": {
+            "pk": 19473,
+            "version": 33
+        },
+        "40.0": {
+            "pk": 22868,
+            "version": 34
+        },
+        "40": {
+            "pk": 26250,
+            "version": 35
+        },
+        "41": {
+            "pk": 30207,
+            "version": 37
+        },
+        "42": {
+            "pk": 30207,
+            "version": 37
+        },
+        "43": {
+            "pk": 36826,
+            "version": 39
+        }
+    },
+    "version": 35,
+    "version_tag": 26250,
+    "download_url": "/download-extension/todo.txt@bart.libert.gmail.com.shell-extension.zip?version_tag=26250"
+}
