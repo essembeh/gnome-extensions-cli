@@ -33,6 +33,7 @@ def run():
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
+        "-D",
         "--dbus",
         action="store_const",
         dest="backend",
@@ -40,6 +41,7 @@ def run():
         help="force DBus backend",
     )
     group.add_argument(
+        "-F",
         "--filesystem",
         action="store_const",
         dest="backend",
