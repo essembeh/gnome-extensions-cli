@@ -56,7 +56,7 @@ class ExtensionManager(ABC):
         Set enabled extensions uuids
         """
 
-    def enable_uuids(self, uuids: List[str]) -> bool:
+    def enable_uuids(self, *uuids: str) -> bool:
         """
         Enable given extensions
         """
@@ -64,7 +64,7 @@ class ExtensionManager(ABC):
         new_uuids = old_uuids | set(uuids)
         return old_uuids != new_uuids and self.set_enabled_uuids(list(new_uuids))
 
-    def disable_uuids(self, uuids: List[str]) -> bool:
+    def disable_uuids(self, *uuids: str) -> bool:
         """
         Disable given extensions
         """

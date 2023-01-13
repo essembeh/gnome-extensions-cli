@@ -60,7 +60,7 @@ class FilesystemExtensionManager(ExtensionManager):
         assert (
             ext.download_url is not None
         ), f"Cannot find recommended version for {ext.uuid}"
-        if self.disable_uuids([ext.uuid]):
+        if self.disable_uuids(ext.uuid):
             print("Disable extension", ext.uuid)
         target_dir = self.user_folder / ext.uuid
         if target_dir.exists():
@@ -80,7 +80,7 @@ class FilesystemExtensionManager(ExtensionManager):
                 with ZipFile(tmp.name) as zipfile:
                     for member in zipfile.namelist():
                         zipfile.extract(member, path=target_dir)
-            if self.enable_uuids([ext.uuid]):
+            if self.enable_uuids(ext.uuid):
                 print(
                     "Enable extension", Label.installed(InstalledExtension(target_dir))
                 )
@@ -98,7 +98,7 @@ class FilesystemExtensionManager(ExtensionManager):
 
     def uninstall_extension(self, ext: InstalledExtension):
         assert not ext.read_only, f"Cannot uninstall a system extension {ext.uuid}"
-        if self.disable_uuids([ext.uuid]):
+        if self.disable_uuids(ext.uuid):
             print("Disable", Label.installed(ext))
         rmtree(ext.folder)
         print("Remove folder", Label.folder(ext.folder))

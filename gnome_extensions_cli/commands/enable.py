@@ -28,4 +28,4 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
     Handler for subcommand
     """
     print("Enable:", " ".join(map(Color.YELLOW, args.uuids)))
-    manager.enable_uuids(args.uuids)
+    manager.enable_uuids(*args.uuids)

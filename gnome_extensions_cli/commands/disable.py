@@ -28,4 +28,4 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
     Handler for subcommand
     """
     print("Disable:", " ".join(map(Color.YELLOW, args.uuids)))
-    manager.disable_uuids(args.uuids)
+    manager.disable_uuids(*args.uuids)

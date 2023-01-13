@@ -42,7 +42,7 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
                 Label.available(available_ext),
                 "is already installed",
             )
-            manager.enable_uuids([available_ext.uuid])
+            manager.enable_uuids(available_ext.uuid)
         else:
             print(Icons.PACKAGE, "Install", Label.available(available_ext))
             manager.install_extension(available_ext)
