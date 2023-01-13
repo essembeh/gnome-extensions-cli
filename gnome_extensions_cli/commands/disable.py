@@ -1,5 +1,6 @@
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
 
+from ..icons import Color
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
 
@@ -16,4 +17,5 @@ def configure(parser: ArgumentParser):
 
 
 def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore):
+    print("Disable:", " ".join(map(Color.YELLOW, args.uuids)))
     manager.disable_uuids(args.uuids)

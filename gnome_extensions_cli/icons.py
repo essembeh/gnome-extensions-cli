@@ -1,7 +1,10 @@
 from enum import Enum
-from typing import Optional
+from sys import version
+from typing import Any, Optional
 
 from colorama import Back, Fore, Style
+
+from gnome_extensions_cli.schema import AvailableExtension, InstalledExtension
 
 
 class Icons(Enum):
@@ -79,3 +82,33 @@ class Color(Enum):
             else style
         )
         return color(*args, fore=self.value, style=style)
+
+
+class Label:
+    @staticmethod
+    def uuid(uuid: str) -> str:
+        return f"({Color.YELLOW(uuid)})"
+
+    @staticmethod
+    def version(version: Optional[Any]) -> Optional[str]:
+        return f"v{version}" if version is not None else None
+
+    @staticmethod
+    def url(base: str, path: Optional[str]) -> Optional[str]:
+        return Color.BLUE(base + path) if path is not None else None
+
+    @staticmethod
+    def available(ext: AvailableExtension) -> str:
+        return f"{Color.DEFAULT(ext.name, style='bright')} {Label.uuid(ext.uuid)} {Label.version(ext.version) or ''}"
+
+    @staticmethod
+    def installed(ext: InstalledExtension, enabled: Optional[bool] = None) -> str:
+        name = ext.metadata.name
+        if enabled is True:
+            name = Color.DEFAULT(name, style="bright")
+        elif enabled is False:
+            name = Color.DEFAULT(name, style="dim")
+        return (
+            f"{name} {Label.uuid(ext.metadata.uuid)} {Label.version(ext.metadata.version) or ''} "
+            + (Color.RED("/system") if ext.read_only else Color.GREEN("/user"))
+        )

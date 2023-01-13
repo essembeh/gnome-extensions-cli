@@ -1,6 +1,6 @@
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
 
-from ..icons import Color, Icons
+from ..icons import Color, Icons, Label
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
 
@@ -22,18 +22,22 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
         installed_extension = installed_extensions.get(uuid)
         if installed_extension is None:
             print(
-                Icons.ERROR,
-                f"Extension {Color.YELLOW(uuid)} is not installed",
+                Icons.WARNING,
+                f"Extension {Color.RED(uuid)} is not installed",
             )
         elif installed_extension.read_only:
             print(
-                Icons.ERROR,
-                f"Cannot uninstall {Color.YELLOW(uuid)}, it is a system extension",
+                Icons.HINT,
+                "Cannot uninstall",
+                installed_extension.metadata.name,
+                Label.uuid(installed_extension.uuid),
+                ": it is a system extension",
             )
         else:
             print(
                 Icons.TRASH,
-                f"Uninstall {installed_extension.metadata.name}",
-                f"({Color.YELLOW(installed_extension.uuid)})",
+                "Uninstall",
+                installed_extension.metadata.name,
+                Label.uuid(installed_extension.uuid),
             )
             manager.uninstall_extension(installed_extension)

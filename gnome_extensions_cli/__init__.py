@@ -1,6 +1,3 @@
-from pkg_resources import get_distribution
+from importlib.metadata import version
 
-
-__title__ = "gnome-extensions-cli"
-__version__ = get_distribution(__title__).version
-__author__ = "Sébastien MB"
+__version__ = version(__name__)

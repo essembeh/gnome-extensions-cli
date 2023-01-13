@@ -1,14 +1,9 @@
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
-from typing import Any, Dict, List, Optional
 
-from gnome_extensions_cli.schema import AvailableExtension
-
-from ..icons import Color, Icons
+from ..icons import Color, Icons, Label
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
-from .show import build_url, print_key_value
-
-INDENT = "  "
+from .show import print_key_value
 
 
 def configure(parser: ArgumentParser):
@@ -34,15 +29,17 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
             Icons.DOT_BLUE if installed_ext is not None else Icons.DOT_WHITE,
             f"[{index}/{len(results)}]",
             Color.DEFAULT(available_ext.name, style="bright"),
-            f"({Color.YELLOW(available_ext.uuid)})",
+            Label.uuid(available_ext.uuid),
         )
-        print_key_value("link", build_url(store.url, available_ext.link), 1)
-        print_key_value("screenshot", build_url(store.url, available_ext.screenshot), 1)
+        print_key_value("link", Label.url(store.url, available_ext.link), 1)
+        print_key_value("screenshot", Label.url(store.url, available_ext.screenshot), 1)
         print_key_value("creator", available_ext.creator, 1)
-        print_key_value("recommended version", available_ext.version, 1)
+        print_key_value("recommended version", Label.version(available_ext.version), 1)
         if installed_ext is not None:
-            print_key_value("installed version", installed_ext.metadata.version, 1)
+            print_key_value(
+                "installed version", Label.version(installed_ext.metadata.version), 1
+            )
         if args.verbose:
             print_key_value("description", available_ext.description, 1)
 
-        print("-" * 80)
+        print(("-" * 80) if args.verbose else "")

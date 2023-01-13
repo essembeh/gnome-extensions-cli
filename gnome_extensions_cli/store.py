@@ -1,6 +1,6 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from itertools import count
-from typing import Iterable, Optional, Union
+from typing import Iterable, List, Optional, Tuple, Union
 
 import requests
 
@@ -15,6 +15,24 @@ class GnomeExtensionStore:
 
     url: str = "https://extensions.gnome.org"
     timeout: int = 20
+
+    def iter_fetch(
+        self,
+        extensions: Iterable[Union[str, int]],
+        shell_version: Optional[str] = None,
+        max_workers: Optional[int] = None,
+    ) -> Iterable[Tuple[Union[str, int], Optional[AvailableExtension]]]:
+        """
+        Fetch multiple available extesions in parallel and yield when fetched
+        """
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            jobs = {
+                executor.submit(lambda u: self.find(u, shell_version), ext): ext
+                for ext in extensions
+            }
+            for job in as_completed(jobs.keys()):
+                uuid = jobs[job]
+                yield (uuid, job.result())
 
     def find(
         self, ext: Union[str, int], shell_version: Optional[str] = None
@@ -73,7 +91,7 @@ class GnomeExtensionStore:
         Search for extensions
         """
         params = {"search": motif, "shell_version": shell_version, "page": 1}
-        count = 0
+        found = 0
         while True:
             resp = requests.get(
                 f"{self.url}/extension-query/",
@@ -84,8 +102,8 @@ class GnomeExtensionStore:
             data = Search.parse_raw(resp.content)
             for ext in data.extensions:
                 yield ext
-                count += 1
-                if 0 < limit <= count:
+                found += 1
+                if 0 < limit <= found:
                     return
             if params["page"] >= data.numpages:
                 break

@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional
 
 from gnome_extensions_cli.schema import AvailableExtension
 
-from ..icons import Color, Icons
+from ..icons import Color, Icons, Label
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
 
@@ -18,14 +18,15 @@ def configure(parser: ArgumentParser):
     parser.add_argument(
         "extensions",
         nargs=ONE_OR_MORE,
-        help="uuid or extension number",
+        metavar="UUID_OR_PK",
+        help="uuid (or pk) of extensions",
     )
 
 
 def print_key_value(key: str, value: Optional[Any], indent: int = 0):
     if value is not None:
         if isinstance(value, str) and "\n" in value:
-            prefix = INDENT * (indent + 1)
+            prefix = INDENT * (indent + 2)
             value = f"\n{prefix}" + value.replace("\n", f"\n{prefix}")
         print(
             INDENT * indent,
@@ -45,48 +46,58 @@ def build_versions_dict(ext: AvailableExtension) -> Dict[int, List[str]]:
     return out
 
 
-def build_url(base: str, path: Optional[str]) -> Optional[str]:
-    return Color.BLUE(base + path) if path is not None else None
-
-
 def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
     installed_extensions = {e.uuid: e for e in manager.list_installed_extensions()}
 
     shell_version = manager.get_current_shell_version()
-    for ext_id in dict.fromkeys(args.extensions):
-        available_ext = store.find(ext_id, shell_version=shell_version)
+
+    for motif, available_ext in store.iter_fetch(
+        dict.fromkeys(args.extensions), shell_version=shell_version
+    ):
         if available_ext is not None:
             installed_ext = installed_extensions.get(available_ext.uuid)
             print(
                 Icons.DOT_BLUE if installed_ext is not None else Icons.DOT_WHITE,
                 Color.DEFAULT(available_ext.name, style="bright"),
-                f"({Color.YELLOW(available_ext.uuid)})",
+                Label.uuid(available_ext.uuid),
             )
-            print_key_value("link", build_url(store.url, available_ext.link), 1)
+            print_key_value("link", Label.url(store.url, available_ext.link), 1)
             print_key_value(
-                "screenshot", build_url(store.url, available_ext.screenshot), 1
+                "screenshot", Label.url(store.url, available_ext.screenshot), 1
             )
             print_key_value("creator", available_ext.creator, 1)
             print_key_value(
-                "creator_url", build_url(store.url, available_ext.creator_url), 1
+                "creator_url", Label.url(store.url, available_ext.creator_url), 1
             )
             if args.verbose:
                 print_key_value("description", available_ext.description, 1)
             print_key_value("tag", available_ext.version_tag, 1)
-            print_key_value("recommended version", available_ext.version, 1)
+            print_key_value("pk", available_ext.pk, 1)
+            print_key_value(
+                "recommended version", Label.version(available_ext.version), 1
+            )
             if installed_ext is not None:
-                print_key_value("installed version", installed_ext.metadata.version, 1)
-            print_key_value("available versions", "", 1)
-            app_versions_dict = build_versions_dict(available_ext)
-            for app_version in sorted(app_versions_dict, reverse=True):
-                shell_versions = app_versions_dict[app_version]
-                gnome_version_label = f"v{shell_versions[0]}"
-                if len(shell_versions) > 1:
-                    gnome_version_label += f" to v{shell_versions[-1]}"
-                print(
-                    INDENT * 2,
-                    f"v{app_version} for Gnome Shell {gnome_version_label}",
+                print_key_value(
+                    "installed version",
+                    Label.version(installed_ext.metadata.version),
+                    1,
                 )
+            if args.verbose:
+                app_versions_dict = build_versions_dict(available_ext)
+                print_key_value("available versions", "", 1)
+                for app_version in sorted(app_versions_dict, reverse=True):
+                    shell_versions = app_versions_dict[app_version]
+                    print(
+                        INDENT * 2,
+                        Label.version(app_version),
+                        "for Gnome Shell",
+                        Label.version(shell_versions[0]),
+                        f" to {Label.version(shell_versions[-1])}"
+                        if len(shell_versions) > 1
+                        else "",
+                    )
+                    if not args.verbose:
+                        break
             print()
         else:
-            print(Icons.DOT_RED, f"Cannot find extension {ext_id}")
+            print(Icons.DOT_RED, f"Cannot find extension {motif}")
