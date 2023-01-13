@@ -1,5 +1,5 @@
 from enum import Enum
-from sys import version
+from pathlib import Path
 from typing import Any, Optional
 
 from colorama import Back, Fore, Style
@@ -112,3 +112,7 @@ class Label:
             f"{name} {Label.uuid(ext.metadata.uuid)} {Label.version(ext.metadata.version) or ''} "
             + (Color.RED("/system") if ext.read_only else Color.GREEN("/user"))
         )
+
+    @staticmethod
+    def folder(path: Path) -> str:
+        return Color.BLUE(f"{path}/", style="bright")

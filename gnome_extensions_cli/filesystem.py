@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import subprocess
 import sys
 from dataclasses import dataclass, field
@@ -12,6 +10,7 @@ from typing import List
 from urllib.request import urlopen
 from zipfile import ZipFile
 
+from .icons import Color, Icons, Label
 from .manager import ExtensionManager
 from .schema import AvailableExtension, InstalledExtension
 from .store import GnomeExtensionStore
@@ -57,29 +56,48 @@ class FilesystemExtensionManager(ExtensionManager):
         assert (
             ext.download_url is not None
         ), f"Cannot find recommended version for {ext.uuid}"
-        self.disable_uuids([ext.uuid])
+        if self.disable_uuids([ext.uuid]):
+            print("Disable extension", ext.uuid)
         target_dir = self.user_folder / ext.uuid
         if target_dir.exists():
+            print("Remove existing folder:", Label.folder(target_dir))
             rmtree(target_dir)
         target_dir.mkdir(parents=True)
         try:
             with NamedTemporaryFile() as tmp:
-                with urlopen(f"{self.store.url}{ext.download_url}") as stream:
+                print(
+                    "Download extensions from",
+                    Label.url(self.store.url, ext.download_url),
+                )
+                with urlopen(self.store.url + ext.download_url) as stream:
                     tmp.write(stream.read())
                 tmp.seek(0)
+                print("Extract extension to", Label.folder(target_dir))
                 with ZipFile(tmp.name) as zipfile:
                     for member in zipfile.namelist():
                         zipfile.extract(member, path=target_dir)
-            self.enable_uuids([ext.uuid])
-        except BaseException:  # pylint: disable=broad-except
-            rmtree(str(target_dir))
+            if self.enable_uuids([ext.uuid]):
+                print(
+                    "Enable extension", Label.installed(InstalledExtension(target_dir))
+                )
+        except BaseException as error:  # pylint: disable=broad-except
+            print(
+                Icons.BOOM,
+                f"Error while installing {ext.uuid}:",
+                Color.RED(error),
+                file=sys.stderr,
+            )
+            print("Remove temporary folder:", Label.folder(target_dir))
+            rmtree(target_dir)
             return False
         return True
 
     def uninstall_extension(self, ext: InstalledExtension):
         assert not ext.read_only, f"Cannot uninstall a system extension {ext.uuid}"
-        self.disable_uuids([ext.uuid])
+        if self.disable_uuids([ext.uuid]):
+            print("Disable", Label.installed(ext))
         rmtree(ext.folder)
+        print("Remove folder", Label.folder(ext.folder))
 
     def edit_extension(self, ext: InstalledExtension):
         raise NotImplementedError()
@@ -92,35 +110,54 @@ class FilesystemExtensionManager(ExtensionManager):
         uuids = [m.group("uuid") for m in finditer(r"'(?P<uuid>[^']+)'", stdout)]
         return uuids
 
-    def set_enabled_uuids(self, uuids: List[str]):
-        uuids_text = ",".join((f"'{uuid}'" for uuid in uuids))
-        subprocess.check_call(
-            [
-                "gsettings",
-                "set",
-                "org.gnome.shell",
-                "enabled-extensions",
-                f"[{uuids_text}]",
-            ]
-        )
-        self.restart_gnome_shell()
+    def set_enabled_uuids(self, uuids: List[str]) -> bool:
+        uuids_text = ",".join((f'"{uuid}"' for uuid in uuids))
+        command = [
+            "gsettings",
+            "set",
+            "org.gnome.shell",
+            "enabled-extensions",
+            f"[{uuids_text}]",
+        ]
+        if self._run(command) != 0:
+            print(
+                Icons.WARNING,
+                f"Error while enable extensions with {Color.YELLOW('gesttings')}",
+                file=sys.stderr,
+            )
+            return False
+        return self.restart_gnome_shell()
 
     def restart_gnome_shell(self) -> bool:
-        proc = subprocess.run(
-            [
-                "dbus-send",
-                "--session",
-                "--type=method_call",
-                "--dest=org.gnome.Shell",
-                "/org/gnome/Shell",
-                "org.gnome.Shell.Eval",
-                'string:"global.reexec_self();"',
-            ],
-            check=False,
-        )
-        if proc.returncode != 0:
+        """
+        Manually restart Gnome Shell
+        """
+        command = [
+            "dbus-send",
+            "--session",
+            "--type=method_call",
+            "--dest=org.gnome.Shell",
+            "/org/gnome/Shell",
+            "org.gnome.Shell.Eval",
+            'string:"global.reexec_self();"',
+        ]
+        if self._run(command) != 0:
             print(
+                Icons.WARNING,
                 "Could not restart Gnome Shell, you have to restart it manually",
                 file=sys.stderr,
             )
-        return proc.returncode == 0
+            return False
+        return True
+
+    def _run(self, command: List[str]) -> int:
+        """
+        Run an external process
+        """
+        process = subprocess.run(
+            command,
+            check=False,
+            stderr=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+        )
+        return process.returncode

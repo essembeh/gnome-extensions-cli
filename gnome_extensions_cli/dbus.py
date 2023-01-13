@@ -94,5 +94,6 @@ class DbusExtensionManager(ExtensionManager):
     def list_enabled_uuids(self) -> List[str]:
         return list(self.settings["enabled-extensions"])
 
-    def set_enabled_uuids(self, uuids: List[str]):
+    def set_enabled_uuids(self, uuids: List[str]) -> bool:
         self.settings["enabled-extensions"] = uuids
+        return True

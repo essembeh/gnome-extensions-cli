@@ -30,21 +30,15 @@ class ExtensionManager(ABC):
         pass
 
     @abstractmethod
-    def set_enabled_uuids(self, uuids: List[str]):
+    def set_enabled_uuids(self, uuids: List[str]) -> bool:
         pass
 
     def enable_uuids(self, uuids: List[str]) -> bool:
         old_uuids = set(self.list_enabled_uuids())
         new_uuids = old_uuids | set(uuids)
-        if old_uuids != new_uuids:
-            self.set_enabled_uuids(list(new_uuids))
-            return True
-        return False
+        return old_uuids != new_uuids and self.set_enabled_uuids(list(new_uuids))
 
     def disable_uuids(self, uuids: List[str]) -> bool:
         old_uuids = set(self.list_enabled_uuids())
         new_uuids = old_uuids - set(uuids)
-        if old_uuids != new_uuids:
-            self.set_enabled_uuids(list(new_uuids))
-            return True
-        return False
+        return old_uuids != new_uuids and self.set_enabled_uuids(list(new_uuids))
