@@ -53,20 +53,9 @@ def run():
     )
 
     subparsers = parser.add_subparsers()
+
     list_.configure(
         subparsers.add_parser("list", aliases=["ls"], help="list installed extensions")
-    )
-    install.configure(
-        subparsers.add_parser("install", aliases=["i"], help="install extensions")
-    )
-    uninstall.configure(
-        subparsers.add_parser("uninstall", aliases=["u"], help="uninstall extensions")
-    )
-    enable.configure(
-        subparsers.add_parser("enable", aliases=[], help="enable extensions")
-    )
-    disable.configure(
-        subparsers.add_parser("disable", aliases=[], help="disable extensions")
     )
     search.configure(
         subparsers.add_parser("search", aliases=[], help="search for extensions")
@@ -74,8 +63,19 @@ def run():
     show.configure(
         subparsers.add_parser("show", aliases=[], help="show extensions details")
     )
+
+    install.configure(
+        subparsers.add_parser("install", aliases=["i"], help="install extensions")
+    )
+    uninstall.configure(
+        subparsers.add_parser("uninstall", aliases=[""], help="uninstall extensions")
+    )
     update.configure(
         subparsers.add_parser("update", aliases=["u"], help="update extensions")
+    )
+
+    enable.configure(
+        subparsers.add_parser("enable", aliases=[], help="enable extensions")
     )
     disable.configure(
         subparsers.add_parser("disable", aliases=[], help="disable extensions")
@@ -83,7 +83,7 @@ def run():
     preferences.configure(
         subparsers.add_parser(
             "preferences",
-            aliases=["edit", "pref"],
+            aliases=["p", "config"],
             help="edit preferences of extension",
         )
     )
