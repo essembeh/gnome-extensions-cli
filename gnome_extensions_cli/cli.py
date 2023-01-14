@@ -75,11 +75,9 @@ def run():
         subparsers.add_parser("show", aliases=[], help="show extensions details")
     )
     update.configure(
-        subparsers.add_parser("update", aliases=["u"], help="update extensions")
+        subparsers.add_parser("update", aliases=["up"], help="update extensions")
     )
-    disable.configure(
-        subparsers.add_parser("disable", aliases=[], help="disable extensions")
-    )
+    
     preferences.configure(
         subparsers.add_parser(
             "preferences",
