@@ -4,7 +4,7 @@ gnome-extensions-cli
 
 from argparse import ArgumentParser, Namespace
 
-from ..icons import Icons, Label
+from ..icons import Color, Icons, Label
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
 
@@ -34,7 +34,12 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
     show_all = "all" in args and args.all
 
     if verbose:
-        print("Gnome Shell", manager.get_current_shell_version())
+        print("Gnome Shell", Label.version(manager.get_current_shell_version()))
+        print()
+        print(
+            "Installed Extensions:",
+            f"(enabled: {Icons.DOT_BLUE}, disabled: {Icons.DOT_WHITE})",
+        )
 
     installed_extensions = sorted(
         manager.list_installed_extensions(), key=lambda x: x.uuid.lower()
@@ -49,3 +54,10 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
         for installed_ext in installed_extensions:
             if installed_ext.uuid not in enabled_uuids:
                 print(Icons.DOT_WHITE, Label.installed(installed_ext, enabled=False))
+
+    if verbose:
+        print()
+        print(
+            "Enabled uuids:",
+            ", ".join(map(Color.YELLOW, sorted(enabled_uuids, key=str.lower))),
+        )
