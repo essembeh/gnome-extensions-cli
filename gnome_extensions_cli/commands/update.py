@@ -92,7 +92,11 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
                 Label.available(available_ext),
                 ": outdated",
             )
-            extensions_to_update.append(available_ext)
+            if not (
+                    args.user and
+                    installed_extensions[available_ext.uuid].read_only
+            ):
+                extensions_to_update.append(available_ext)
         else:
             # extension is up to date
             print(
