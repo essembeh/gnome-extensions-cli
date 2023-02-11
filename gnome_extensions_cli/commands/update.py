@@ -78,6 +78,14 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
             )
             if args.install:
                 extensions_to_install.append(available_ext)
+        elif args.user and installed_extensions[available_ext.uuid].read_only:
+            # extension is readonly, update only user extensions
+            print(
+                progress,
+                "Found extension",
+                Label.available(available_ext),
+                ": skip system extension",
+            )
         elif (
             version_comparator(
                 installed_extensions[available_ext.uuid].metadata.version,
