@@ -3,7 +3,7 @@ gnome-extensions-cli
 """
 
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 from gnome_extensions_cli.schema import AvailableExtension
 
@@ -28,6 +28,28 @@ def configure(parser: ArgumentParser):
         metavar="UUID_OR_PK",
         help="uuid (or pk) of extensions",
     )
+
+
+def print_form(data: Dict[str, Any], indent: str = ""):
+    """
+    Print a form-like from given data
+    """
+    maxlen = max(map(len, data.keys()))
+    for key, value in data.items():
+        if value is not None:
+            # right align
+            key = key.rjust(maxlen)
+            # key style: dim
+            key = Color.DEFAULT(key, style="dim")
+
+            if isinstance(value, str) and "\n" in value:
+                # multiline string, indent each line
+                value = f"\n{indent}{' ' * (maxlen + 2)}".join(value.splitlines())
+            elif isinstance(value, (list, set, dict)):
+                # if value is a list-like, indent all items
+                value = f"\n{indent}{' ' * (maxlen + 2)}".join(map(str, value))
+
+            print(f"{indent}{key}: {value}")
 
 
 def print_key_value(key: str, value: Optional[Any], indent: int = 0):
@@ -77,6 +99,26 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
                 Color.DEFAULT(available_ext.name, style="bright"),
                 Label.uuid(available_ext.uuid),
             )
+
+            print_form(
+                {
+                    "link": Label.url(store.url, available_ext.link),
+                    "screenshot": Label.url(store.url, available_ext.screenshot),
+                    "creator": available_ext.creator,
+                    "creator_url": Label.url(store.url, available_ext.creator_url),
+                    "description": available_ext.description if args.verbose else None,
+                    "tag": available_ext.version_tag,
+                    "pk": available_ext.pk,
+                    "recommended version": Label.version(available_ext.version),
+                    "installed version": Label.version(installed_ext.metadata.version)
+                    if installed_ext is not None
+                    else None,
+                    "versions": list(available_ext.shell_version_map.keys()),
+                    "available versions": None,
+                },
+                indent="    ",
+            )
+            continue
             print_key_value("link", Label.url(store.url, available_ext.link), 1)
             print_key_value(
                 "screenshot", Label.url(store.url, available_ext.screenshot), 1
