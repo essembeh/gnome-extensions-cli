@@ -91,10 +91,10 @@ def run():
     args = parser.parse_args()
 
     try:
-        # instanciate store
+        # instantiate store
         store = GnomeExtensionStore()
 
-        # instanciate manager
+        # instantiate manager
         manager = None
         if args.backend == "dbus":
             manager = DbusExtensionManager()

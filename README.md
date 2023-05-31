@@ -137,7 +137,7 @@ The `show` command fetches details from _Gnome website_ and prints them:
 
 Using `--dbus`, the application uses _dbus_ messages with DBus Python API to communicate with Gnome Shell directly.
 
-Installations are interactive, like when you install extensions from your brower on Gnome website, you are prompted with a Gnome _Yes/No_ dialog before installing the extensions
+Installations are interactive, like when you install extensions from your browser on Gnome website, you are prompted with a Gnome _Yes/No_ dialog before installing the extensions
 
 Pros:
 
@@ -156,7 +156,7 @@ Using `--filesystem`, the application uses unzip packages from [Gnome website](h
 
 Pros:
 
-- You can install extensions without any Gnome session running (usign _ssh_ for example)
+- You can install extensions without any Gnome session running (using _ssh_ for example)
 - Many `gext` alternatives CLI tools use this method
 
 Cons:

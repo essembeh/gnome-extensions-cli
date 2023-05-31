@@ -20,7 +20,7 @@ def configure(parser: ArgumentParser):
     """
     parser.set_defaults(handler=run)
     parser.add_argument(
-        "-v", "--verbose", action="store_true", help="display more informations"
+        "-v", "--verbose", action="store_true", help="display more information"
     )
     parser.add_argument(
         "extensions",

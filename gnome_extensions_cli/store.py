@@ -27,7 +27,7 @@ class GnomeExtensionStore:
         max_workers: Optional[int] = None,
     ) -> Iterable[Tuple[Union[str, int], Optional[AvailableExtension]]]:
         """
-        Fetch multiple available extesions in parallel and yield when fetched
+        Fetch multiple available extensions in parallel and yield when fetched
         """
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             jobs = {
