@@ -459,7 +459,7 @@
             "creator": "l300lvl",
             "creator_url": "/accounts/profile/l300lvl",
             "pk": 163,
-            "description": "Replace digital clock with Analog Neon Clock for &gt;3.4. Replaces the normal time/date but not the calender. Placement preference now available(except 3.8). Colors can be changed via css, for now I added color notes in the css, a preference to change themes will come soon.\n\nTodo: placement bug, Allow keeping time/date, add time to menu, color/size/thickness prefs/seconds optional. Major credit on the work of this fork goes to https://extensions.gnome.org/accounts/profile/mathematical.coffee Fork based on original work by \"obneq\" https://github.com/obneq/",
+            "description": "Replace digital clock with Analog Neon Clock for &gt;3.4. Replaces the normal time/date but not the calendar. Placement preference now available(except 3.8). Colors can be changed via css, for now I added color notes in the css, a preference to change themes will come soon.\n\nTodo: placement bug, Allow keeping time/date, add time to menu, color/size/thickness prefs/seconds optional. Major credit on the work of this fork goes to https://extensions.gnome.org/accounts/profile/mathematical.coffee Fork based on original work by \"obneq\" https://github.com/obneq/",
             "link": "/extension/163/analog-clock/",
             "icon": "/extension-data/icons/icon_163_1.png",
             "screenshot": "/extension-data/screenshots/screenshot_163.png",
