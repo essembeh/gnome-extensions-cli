@@ -20,7 +20,7 @@ Available commands:
 - `gext list` to list you installed extensions
 - `gext search` to search for extensions on [Gnome website](https://extensions.gnome.org)
 - `gext install` to install extensions
-- `gext install` to update any or all your extensions
+- `gext update` to update any or all your extensions
 - `gext uninstall` to uninstall extensions
 - `gext show` to show details about extensions
 - `gext enable` to enable extensions
