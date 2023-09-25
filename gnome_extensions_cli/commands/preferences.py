@@ -4,8 +4,6 @@ gnome-extensions-cli
 
 from argparse import ArgumentParser, Namespace
 
-from more_itertools import first_true
-
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
 
@@ -27,8 +25,8 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
     """
     Handler for subcommand
     """
-    ext = first_true(
-        manager.list_installed_extensions(), pred=lambda e: e.uuid == args.uuid
+    ext = next(
+        filter(lambda e: e.uuid == args.uuid, manager.list_installed_extensions()), None
     )
     assert ext is not None, f"Extension {args.uuid} is not installed"
     manager.edit_extension(ext)
