@@ -67,7 +67,10 @@ class GnomeExtensionStore:
         if resp.status_code == 404:
             return None
         resp.raise_for_status()
-        return AvailableExtension.parse_raw(resp.content)
+        import json
+
+        print(">>>>>>>>>>>>>>>>>>", json.dumps(resp.json(), indent=2))
+        return AvailableExtension.model_validate_json(resp.text)
 
     def find_by_pk(
         self, pk: int, shell_version: Optional[str] = None
@@ -86,7 +89,7 @@ class GnomeExtensionStore:
         if resp.status_code == 404:
             return None
         resp.raise_for_status()
-        return AvailableExtension.parse_raw(resp.content)
+        return AvailableExtension.model_validate_json(resp.text)
 
     def search(
         self, motif: str, shell_version: str = "all", limit: int = 0
@@ -103,7 +106,7 @@ class GnomeExtensionStore:
                 timeout=self.timeout,
             )
             resp.raise_for_status()
-            data = Search.parse_raw(resp.content)
+            data = Search.model_validate_json(resp.text)
             for ext in data.extensions:
                 yield ext
                 found += 1

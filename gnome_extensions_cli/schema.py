@@ -8,18 +8,18 @@ from functools import cached_property
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field, NoneStr  # pylint: disable=no-name-in-module
+from pydantic import BaseModel, Field
 
 
 class Metadata(BaseModel):
     uuid: str
     name: str
-    description: NoneStr
-    extension_id: NoneStr = Field(alias="extension-id")
-    shell_version: Optional[List[str]] = Field(alias="shell-version")
-    url: NoneStr
-    version: Optional[Union[int, str]]
-    path: Optional[Path]
+    description: Optional[str] = None
+    extension_id: Optional[str] = Field(alias="extension-id", default=None)
+    shell_version: Optional[List[str]] = Field(alias="shell-version", default=None)
+    url: Optional[str] = None
+    version: Optional[Union[str, int]] = None
+    path: Optional[Path] = None
 
 
 class _Version(BaseModel):
@@ -33,14 +33,14 @@ class AvailableExtension(BaseModel):
     name: str
     description: str
     creator: str
-    creator_url: NoneStr
-    link: NoneStr
-    icon: NoneStr
-    screenshot: NoneStr
+    creator_url: Optional[str] = None
+    link: Optional[str] = None
+    icon: Optional[str] = None
+    screenshot: Optional[str] = None
     shell_version_map: Dict[str, _Version]
-    version: Optional[int]
-    version_tag: Optional[int]
-    download_url: NoneStr
+    version: Optional[int] = None
+    version_tag: Optional[int] = None
+    download_url: Optional[str] = None
 
 
 class Search(BaseModel):
@@ -54,12 +54,16 @@ class InstalledExtension:
     folder: Path
 
     @property
+    def metadata_json(self) -> Path:
+        return self.folder / "metadata.json"
+
+    @property
     def read_only(self):
         return not os.access(str(self.folder), os.W_OK)
 
     @cached_property
     def metadata(self) -> Metadata:
-        return Metadata.parse_file(self.folder / "metadata.json")
+        return Metadata.model_validate_json(self.metadata_json.read_text())
 
     @property
     def uuid(self) -> str:

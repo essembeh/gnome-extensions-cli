@@ -19,7 +19,6 @@ def test_version():
 
 
 def test_schema():
-
     for folder in filter(
         Path.is_dir,
         [
@@ -30,7 +29,7 @@ def test_schema():
         for sub in folder.iterdir():
             metadata_file = sub / "metadata.json"
             if metadata_file.exists():
-                metadata = Metadata.parse_file(metadata_file)
+                metadata = Metadata.model_validate_json(metadata_file.read_text())
                 assert metadata is not None
 
 
@@ -38,7 +37,23 @@ def test_samples():
     samples_dir = Path(__file__).parent / "samples"
     assert samples_dir.is_dir()
 
-    assert AvailableExtension.parse_file(samples_dir / "available.json") is not None
-    assert AvailableExtension.parse_file(samples_dir / "available-alt.json") is not None
-    assert Metadata.parse_file(samples_dir / "installed.json") is not None
-    assert Search.parse_file(samples_dir / "search.json") is not None
+    assert (
+        AvailableExtension.model_validate_json(
+            (samples_dir / "available.json").read_text()
+        )
+        is not None
+    )
+    assert (
+        AvailableExtension.model_validate_json(
+            (samples_dir / "available-alt.json").read_text()
+        )
+        is not None
+    )
+    assert (
+        Metadata.model_validate_json((samples_dir / "installed.json").read_text())
+        is not None
+    )
+    assert (
+        Search.model_validate_json((samples_dir / "search.json").read_text())
+        is not None
+    )
