@@ -67,9 +67,7 @@ class GnomeExtensionStore:
         if resp.status_code == 404:
             return None
         resp.raise_for_status()
-        import json
 
-        print(">>>>>>>>>>>>>>>>>>", json.dumps(resp.json(), indent=2))
         return AvailableExtension.model_validate_json(resp.text)
 
     def find_by_pk(
