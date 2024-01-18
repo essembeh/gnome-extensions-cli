@@ -4,6 +4,8 @@ gnome-extensions-cli
 
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
 
+from tqdm import tqdm
+
 from ..icons import Color, Icons, Label
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
@@ -32,9 +34,17 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
     enabled_uuids = manager.list_enabled_uuids()
     shell_version = manager.get_current_shell_version()
 
-    for motif, available_ext in store.iter_fetch(
-        dict.fromkeys(args.extensions), shell_version=shell_version
-    ):
+    extensions_to_fetch = dict.fromkeys(args.extensions)
+    fetched_extensions = {
+        uuid: ext
+        for uuid, ext in tqdm(
+            store.iter_fetch(extensions_to_fetch, shell_version=shell_version),
+            unit=" extension(s) fetched",
+            total=len(extensions_to_fetch),
+        )
+    }
+
+    for motif, available_ext in fetched_extensions.items():
         if available_ext is None:
             print(Icons.ERROR, "Cannot find extension", Color.RED(motif))
         elif available_ext.uuid not in installed_extensions:

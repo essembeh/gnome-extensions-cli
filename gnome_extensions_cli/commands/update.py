@@ -4,6 +4,8 @@ gnome-extensions-cli
 
 from argparse import ZERO_OR_MORE, ArgumentParser, Namespace
 
+from tqdm import tqdm
+
 from ..icons import Color, Icons, Label
 from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
@@ -56,13 +58,24 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
     enabled_uuids = manager.list_enabled_uuids()
     shell_version = manager.get_current_shell_version()
 
+    extensions_to_fetch = (
+        args.extensions
+        if len(args.extensions) > 0
+        else [uuid for uuid in enabled_uuids if uuid in installed_extensions]
+    )
     # fetch available
+    fetched_extensions = {
+        uuid: ext
+        for uuid, ext in tqdm(
+            store.iter_fetch(extensions_to_fetch, shell_version=shell_version),
+            unit=" extension(s) fetched",
+            total=len(extensions_to_fetch),
+        )
+    }
     extensions_to_update = []
     extensions_to_install = []
     count = 0
-    for uuid, available_ext in store.iter_fetch(
-        args.extensions or enabled_uuids, shell_version=shell_version
-    ):
+    for uuid, available_ext in fetched_extensions.items():
         count += 1
         progress = f"[{count}]"
         if available_ext is None:
