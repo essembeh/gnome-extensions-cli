@@ -21,11 +21,11 @@ packaging = "^23.0"
 tqdm = "^4.66.1"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.9.1"
-pylint = "^3.0.3"
-pytest = "^7.1.3"
-pytest-dotenv = "^0.5.2"
-pytest-cov = "^4.1.0"
+black = "*"
+pylint = "*"
+pytest = "*"
+pytest-dotenv = "*"
+pytest-cov = "*"
 
 [tool.poetry.scripts]
 gnome-extensions-cli = "gnome_extensions_cli.cli:run"
