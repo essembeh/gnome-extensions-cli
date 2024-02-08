@@ -33,7 +33,7 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
     Handler for subcommand
     """
     uuids = list(set(args.uuids))
-    if args.fix:
+    if args.not_installed:
         installed_uuids = [e.uuid for e in manager.list_installed_extensions()]
         uuids += [
             uuid
