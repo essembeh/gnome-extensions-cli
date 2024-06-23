@@ -78,6 +78,12 @@ $ poetry shell
 
 # Using
 
+By default commands output use terminal colors and styles for a better experience.
+If you want to disable the colors and style, when using `gext` in shell scripts for example, you can 
+- use `gext --no-color ...` 
+- or set the environment variable `export NO_COLOR=1` in your shell script before calling `gext`
+
+
 ## List your extensions
 
 By default, the `list` command only display the _enabled_ extensions, using `-a|--all` argument also displays _disabled_ ones.

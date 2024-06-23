@@ -6,6 +6,8 @@ import sys
 from argparse import ArgumentParser
 from os import getenv
 
+from colorama import init
+
 from . import __version__
 from .commands import (
     disable,
@@ -34,6 +36,12 @@ def run():
         "--version", action="version", version=f"%(prog)s {__version__}"
     )
 
+    parser.add_argument(
+        "--no-color",
+        action="store_true",
+        help="disable colors and style in output text "
+        + "(you can also set NO_COLOR=1 instead of using this option)",
+    )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "-D",
@@ -89,6 +97,12 @@ def run():
     )
 
     args = parser.parse_args()
+
+    # handle nocolor in output
+    if args.no_color or getenv("NO_COLOR") is not None:
+        init(strip=True, convert=False)
+    else:
+        init()
 
     try:
         # instantiate store
