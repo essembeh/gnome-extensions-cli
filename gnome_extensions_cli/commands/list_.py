@@ -19,7 +19,7 @@ def configure(parser: ArgumentParser):
         "-v", "--verbose", action="store_true", help="display more information"
     )
     parser.add_argument(
-        "--only-uuid", action="store_true", help="display only uuid of extention"
+        "--only-uuid", action="store_true", help="display only uuid of extensions"
     )
     parser.add_argument(
         "-a",
