@@ -61,11 +61,11 @@ class GnomeExtensionStore:
         if shell_version is not None:
             params["shell_version"] = str(shell_version)
         resp = make_request_with_retries(
-            url=f"{self.url}/extension-info/",  # URL de base
-            params=params,  # Paramètres de la requête
-            timeout=self.timeout,  # Timeout spécifié
-            retries=5,  # Nombre de tentatives maximum
-            delay=2  # Délai entre chaque tentative
+            url=f"{self.url}/extension-info/",
+            params=params,
+            timeout=self.timeout,
+            retries=5,
+            delay=2
         )
         if resp.status_code == 404:
             return None
@@ -83,11 +83,11 @@ class GnomeExtensionStore:
         if shell_version is not None:
             params["shell_version"] = str(shell_version)
         resp = make_request_with_retries(
-            url=f"{self.url}/extension-info/",  # URL de base
-            params=params,  # Paramètres de la requête
-            timeout=self.timeout,  # Timeout spécifié
-            retries=5,  # Nombre de tentatives maximum
-            delay=2  # Délai entre chaque tentative
+            url=f"{self.url}/extension-info/", 
+            params=params, 
+            timeout=self.timeout, 
+            retries=5, 
+            delay=2
         )
         if resp.status_code == 404:
             return None
@@ -104,11 +104,11 @@ class GnomeExtensionStore:
         found = 0
         while True:
             resp = make_request_with_retries(
-                url=f"{self.url}/extension-query/",  # URL de base
-                params=params,  # Paramètres de la requête
-                timeout=self.timeout,  # Timeout spécifié
-                retries=5,  # Nombre de tentatives maximum
-                delay=2  # Délai entre chaque tentative
+                url=f"{self.url}/extension-query/",
+                params=params, 
+                timeout=self.timeout,
+                retries=5,
+                delay=2
             )
             resp.raise_for_status()
             data = Search.model_validate_json(resp.text)
