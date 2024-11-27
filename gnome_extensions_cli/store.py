@@ -5,6 +5,7 @@ gnome-extensions-cli
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from typing import Iterable, Optional, Tuple, Union
+from time import sleep
 
 import requests
 
@@ -59,10 +60,12 @@ class GnomeExtensionStore:
         params = {"uuid": uuid}
         if shell_version is not None:
             params["shell_version"] = str(shell_version)
-        resp = requests.get(
-            f"{self.url}/extension-info/",
-            params=params,
-            timeout=self.timeout,
+        resp = make_request_with_retries(
+            url=f"{self.url}/extension-info/",  # URL de base
+            params=params,  # Paramètres de la requête
+            timeout=self.timeout,  # Timeout spécifié
+            retries=5,  # Nombre de tentatives maximum
+            delay=2  # Délai entre chaque tentative
         )
         if resp.status_code == 404:
             return None
@@ -79,10 +82,12 @@ class GnomeExtensionStore:
         params = {"pk": str(pk)}
         if shell_version is not None:
             params["shell_version"] = str(shell_version)
-        resp = requests.get(
-            f"{self.url}/extension-info/",
-            params=params,
-            timeout=self.timeout,
+        resp = make_request_with_retries(
+            url=f"{self.url}/extension-info/",  # URL de base
+            params=params,  # Paramètres de la requête
+            timeout=self.timeout,  # Timeout spécifié
+            retries=5,  # Nombre de tentatives maximum
+            delay=2  # Délai entre chaque tentative
         )
         if resp.status_code == 404:
             return None
@@ -98,10 +103,12 @@ class GnomeExtensionStore:
         params = {"search": motif, "shell_version": shell_version, "page": 1}
         found = 0
         while True:
-            resp = requests.get(
-                f"{self.url}/extension-query/",
-                params=params,
-                timeout=self.timeout,
+            resp = make_request_with_retries(
+                url=f"{self.url}/extension-query/",  # URL de base
+                params=params,  # Paramètres de la requête
+                timeout=self.timeout,  # Timeout spécifié
+                retries=5,  # Nombre de tentatives maximum
+                delay=2  # Délai entre chaque tentative
             )
             resp.raise_for_status()
             data = Search.model_validate_json(resp.text)
@@ -113,3 +120,12 @@ class GnomeExtensionStore:
             if params["page"] >= data.numpages:
                 break
             params["page"] += 1
+
+def make_request_with_retries(url, params=None, timeout=10, retries=5, delay=2):
+    for _ in range(retries):
+        resp = requests.get(f"{url}/extension-info/", params=params, timeout=timeout)
+        if 500 <= resp.status_code < 600:
+            sleep(delay)
+            continue
+        break
+    return resp      
