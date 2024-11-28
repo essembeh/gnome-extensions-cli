@@ -3,10 +3,12 @@ gnome-extensions-cli
 """
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Iterable, Optional, Tuple, Union
 
-import requests
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from .schema import AvailableExtension, Search
 
@@ -19,6 +21,18 @@ class GnomeExtensionStore:
 
     url: str = "https://extensions.gnome.org"
     timeout: int = 20
+    session: Session = field(init=False)
+
+    def __post_init__(self):
+        self.session = Session()
+        self.session.mount(
+            "https://",
+            HTTPAdapter(
+                max_retries=Retry(
+                    total=2, backoff_factor=1, status_forcelist=[500, 502, 503, 504]
+                )
+            ),
+        )
 
     def iter_fetch(
         self,
@@ -59,7 +73,7 @@ class GnomeExtensionStore:
         params = {"uuid": uuid}
         if shell_version is not None:
             params["shell_version"] = str(shell_version)
-        resp = requests.get(
+        resp = self.session.get(
             f"{self.url}/extension-info/",
             params=params,
             timeout=self.timeout,
@@ -79,7 +93,7 @@ class GnomeExtensionStore:
         params = {"pk": str(pk)}
         if shell_version is not None:
             params["shell_version"] = str(shell_version)
-        resp = requests.get(
+        resp = self.session.get(
             f"{self.url}/extension-info/",
             params=params,
             timeout=self.timeout,
@@ -98,7 +112,7 @@ class GnomeExtensionStore:
         params = {"search": motif, "shell_version": shell_version, "page": 1}
         found = 0
         while True:
-            resp = requests.get(
+            resp = self.session.get(
                 f"{self.url}/extension-query/",
                 params=params,
                 timeout=self.timeout,
