@@ -5,9 +5,9 @@ gnome-extensions-cli
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from typing import Iterable, Optional, Tuple, Union
-from time import sleep
 
 import requests
+from tenacity import retry, stop_after_attempt
 
 from .schema import AvailableExtension, Search
 
@@ -51,6 +51,7 @@ class GnomeExtensionStore:
             return self.find_by_pk(int(ext), shell_version=shell_version)
         return self.find_by_uuid(ext, shell_version=shell_version)
 
+    @retry(stop=stop_after_attempt(3))
     def find_by_uuid(
         self, uuid: str, shell_version: Optional[str] = None
     ) -> Optional[AvailableExtension]:
@@ -60,12 +61,10 @@ class GnomeExtensionStore:
         params = {"uuid": uuid}
         if shell_version is not None:
             params["shell_version"] = str(shell_version)
-        resp = make_request_with_retries(
-            url=f"{self.url}/extension-info/",
+        resp = requests.get(
+            f"{self.url}/extension-info/",
             params=params,
             timeout=self.timeout,
-            retries=5,
-            delay=2
         )
         if resp.status_code == 404:
             return None
@@ -73,6 +72,7 @@ class GnomeExtensionStore:
 
         return AvailableExtension.model_validate_json(resp.text)
 
+    @retry(stop=stop_after_attempt(3))
     def find_by_pk(
         self, pk: int, shell_version: Optional[str] = None
     ) -> Optional[AvailableExtension]:
@@ -82,18 +82,17 @@ class GnomeExtensionStore:
         params = {"pk": str(pk)}
         if shell_version is not None:
             params["shell_version"] = str(shell_version)
-        resp = make_request_with_retries(
-            url=f"{self.url}/extension-info/", 
-            params=params, 
-            timeout=self.timeout, 
-            retries=5, 
-            delay=2
+        resp = requests.get(
+            f"{self.url}/extension-info/",
+            params=params,
+            timeout=self.timeout,
         )
         if resp.status_code == 404:
             return None
         resp.raise_for_status()
         return AvailableExtension.model_validate_json(resp.text)
 
+    @retry(stop=stop_after_attempt(3))
     def search(
         self, motif: str, shell_version: str = "all", limit: int = 0
     ) -> Iterable[AvailableExtension]:
@@ -103,12 +102,10 @@ class GnomeExtensionStore:
         params = {"search": motif, "shell_version": shell_version, "page": 1}
         found = 0
         while True:
-            resp = make_request_with_retries(
-                url=f"{self.url}/extension-query/",
-                params=params, 
+            resp = requests.get(
+                f"{self.url}/extension-query/",
+                params=params,
                 timeout=self.timeout,
-                retries=5,
-                delay=2
             )
             resp.raise_for_status()
             data = Search.model_validate_json(resp.text)
@@ -120,12 +117,3 @@ class GnomeExtensionStore:
             if params["page"] >= data.numpages:
                 break
             params["page"] += 1
-
-def make_request_with_retries(url, params=None, timeout=10, retries=5, delay=2):
-    for _ in range(retries):
-        resp = requests.get(f"{url}/extension-info/", params=params, timeout=timeout)
-        if 500 <= resp.status_code < 600:
-            sleep(delay)
-            continue
-        break
-    return resp      

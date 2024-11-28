@@ -19,6 +19,7 @@ pydantic = "^2.3.0"
 requests = "^2.28.1"
 packaging = "^23.0"
 tqdm = "^4.66.1"
+tenacity="^9.0.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
