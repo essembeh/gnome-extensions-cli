@@ -42,7 +42,7 @@ class FilesystemExtensionManager(ExtensionManager):
             ["gnome-shell", "--version"],
             text=True,
         )
-        matcher = fullmatch(r"GNOME Shell (?P<version>[0-9.]+)", stdout.strip())
+        matcher = fullmatch(r"GNOME Shell (?P<version>[0-9]+(?:\.[0-9]+)?)(?:\..+)?", stdout.strip())
         assert matcher is not None, "Cannot retrieve Gnome Shell version"
         return matcher.group("version")
 
