@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gnome-extensions-cli"
-version = "0.10.4"
+version = "0.10.5"
 description = "Command line tool to manage your Gnome Shell extensions"
 homepage = "https://github.com/essembeh/gnome-extensions-cli"
 authors = ["Sébastien MB <seb@essembeh.org>"]
