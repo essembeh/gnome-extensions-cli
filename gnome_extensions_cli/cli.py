@@ -76,10 +76,10 @@ def run():
         subparsers.add_parser("install", aliases=["i"], help="install extensions")
     )
     uninstall.configure(
-        subparsers.add_parser("uninstall", aliases=[""], help="uninstall extensions")
+        subparsers.add_parser("uninstall", aliases=[], help="uninstall extensions")
     )
     update.configure(
-        subparsers.add_parser("update", aliases=[""], help="update extensions")
+        subparsers.add_parser("update", aliases=["u"], help="update extensions")
     )
 
     enable.configure(
