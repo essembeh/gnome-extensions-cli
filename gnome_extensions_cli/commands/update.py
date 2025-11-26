@@ -58,11 +58,16 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
     enabled_uuids = manager.list_enabled_uuids()
     shell_version = manager.get_current_shell_version()
 
-    extensions_to_fetch = (
-        args.extensions
-        if len(args.extensions) > 0
-        else [uuid for uuid in enabled_uuids if uuid in installed_extensions]
-    )
+    extensions_to_fetch = []
+    if len(args.extensions):
+        # Use extensions list given by the user
+        extensions_to_fetch = args.extensions
+    else:
+        # Update all installed extensions that are enable and that have a version
+        for uuid, ext in installed_extensions.items():
+            if uuid in enabled_uuids and ext.metadata.version is not None:
+                extensions_to_fetch.append(uuid)
+
     # fetch available
     fetched_extensions = {
         uuid: ext
