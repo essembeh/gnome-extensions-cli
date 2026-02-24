@@ -9,6 +9,7 @@ from os.path import expanduser
 from pathlib import Path
 from re import finditer, fullmatch
 from shutil import rmtree
+from subprocess import DEVNULL, run
 from tempfile import NamedTemporaryFile
 from typing import List
 from urllib.request import urlopen
@@ -36,13 +37,16 @@ class FilesystemExtensionManager(ExtensionManager):
             Path("/usr/local/share/gnome-shell/extensions"),
         ]
     )
+    auto_compile_schemas: bool = True
 
     def get_current_shell_version(self) -> str:
         stdout = subprocess.check_output(
             ["gnome-shell", "--version"],
             text=True,
         )
-        matcher = fullmatch(r"GNOME Shell (?P<version>[0-9]+(?:\.[0-9]+)?)(?:\..+)?", stdout.strip())
+        matcher = fullmatch(
+            r"GNOME Shell (?P<version>[0-9]+(?:\.[0-9]+)?)(?:\..+)?", stdout.strip()
+        )
         assert matcher is not None, "Cannot retrieve Gnome Shell version"
         return matcher.group("version")
 
@@ -57,9 +61,9 @@ class FilesystemExtensionManager(ExtensionManager):
         return list(out.values())
 
     def install_extension(self, ext: AvailableExtension) -> bool:
-        assert (
-            ext.download_url is not None
-        ), f"Cannot find recommended version for {ext.uuid}"
+        assert ext.download_url is not None, (
+            f"Cannot find recommended version for {ext.uuid}"
+        )
         if self.disable_uuids(ext.uuid):
             print("Disable extension", ext.uuid)
         target_dir = self.user_folder / ext.uuid
@@ -80,6 +84,8 @@ class FilesystemExtensionManager(ExtensionManager):
                 with ZipFile(tmp.name) as zipfile:
                     for member in zipfile.namelist():
                         zipfile.extract(member, path=target_dir)
+            if self.auto_compile_schemas:
+                self.compile_schemas(target_dir)
             if self.enable_uuids(ext.uuid):
                 print(
                     "Enable extension", Label.installed(InstalledExtension(target_dir))
@@ -165,3 +171,48 @@ class FilesystemExtensionManager(ExtensionManager):
             stdout=subprocess.DEVNULL,
         )
         return process.returncode
+
+    def compile_schemas(self, extension_folder: Path) -> bool:
+        if not (schemas_folder := extension_folder / "schemas").exists():
+            # No schemas to compile
+            return True
+        if (schemas_folder / "gschemas.compiled").exists():
+            # Schemas already compiled
+            return True
+        if len(list(schemas_folder.glob("*.gschema.xml"))) == 0:
+            # Folder exists, no schemas to compile
+            return True
+
+        # Check if glib-compile-schemas is available
+        try:
+            run(
+                ["glib-compile-schemas", "--version"],
+                check=True,
+                stdout=DEVNULL,
+                stderr=DEVNULL,
+            )
+        except BaseException:
+            print(
+                Icons.WARNING,
+                "Cannot compile schemas, you may need to manually compile schemas in",
+                Label.folder(extension_folder),
+            )
+            return False
+
+        process = run(
+            ["glib-compile-schemas", "schemas/"],
+            cwd=extension_folder,
+            check=False,
+            stdout=DEVNULL,
+            stderr=DEVNULL,
+        )
+        if process.returncode != 0:
+            print(
+                Icons.ERROR,
+                "Error while compiling schemas, you may need to manually compile schemas in",
+                Label.folder(extension_folder),
+            )
+            return False
+
+        print("Schemas compiled in", Label.folder(extension_folder))
+        return True

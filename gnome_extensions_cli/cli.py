@@ -42,6 +42,11 @@ def run():
         help="disable colors and style in output text "
         + "(you can also set NO_COLOR=1 instead of using this option)",
     )
+    parser.add_argument(
+        "--no-compile-schemas",
+        action="store_false",
+        help="when using filesystem backend, do not compile schemas with glib-compile-schemas if needed",
+    )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "-D",
