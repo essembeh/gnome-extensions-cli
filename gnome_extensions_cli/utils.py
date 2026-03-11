@@ -9,7 +9,7 @@ from packaging.version import Version
 
 def version_comparator(left: Any, right: Any) -> int:
     """
-    Compare two versions by handling None, integer or strings
+    Compare two versions by handling None, integer, float or strings
     """
     if left == right:
         return 0

@@ -18,7 +18,7 @@ class Metadata(BaseModel):
     extension_id: Optional[str] = Field(alias="extension-id", default=None)
     shell_version: Optional[List[str]] = Field(alias="shell-version", default=None)
     url: Optional[str] = None
-    version: Optional[Union[str, int]] = None
+    version: Optional[Union[str, int, float]] = None
     path: Optional[Path] = None
 
 
