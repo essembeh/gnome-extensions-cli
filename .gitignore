@@ -11,5 +11,4 @@ __pycache__
 /.direnv/
 
 # IDE
-/.vscode/*
-!/.vscode/settings.json
+/.vscode/

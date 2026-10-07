@@ -1,7 +1,7 @@
 ![Github](https://img.shields.io/github/tag/essembeh/gnome-extensions-cli.svg)
 ![PyPi](https://img.shields.io/pypi/v/gnome-extensions-cli.svg)
 ![Python](https://img.shields.io/pypi/pyversions/gnome-extensions-cli.svg)
-![CI](https://github.com/essembeh/gnome-extensions-cli/actions/workflows/poetry.yml/badge.svg)
+![CI](https://github.com/essembeh/gnome-extensions-cli/actions/workflows/ci.yml/badge.svg)
 
 # gnome-extensions-cli
 
@@ -57,23 +57,27 @@ You can also install the _latest_ version from the Git repository:
 $ pip3 install --upgrade git+https://github.com/essembeh/gnome-extensions-cli
 ```
 
-You can setup a development environment with, requires [Poetry](https://python-poetry.org/)
+You can setup a development environment with [uv](https://docs.astral.sh/uv/).
+The _DBus_ backend needs [PyGObject](https://pygobject.gnome.org/), which is not installable with `pip`:
+it must come from your system and be exposed to the venv with `--system-site-packages`.
 
 ```sh
-# dependencies to install PyGObject with pip
-$ sudo apt install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0
-
 # clone the repository
 $ git clone https://github.com/essembeh/gnome-extensions-cli
 $ cd gnome-extensions-cli
 
-# install poetry if you don't have it yet
-$ pipx install poetry
+# Debian/Ubuntu: use the system PyGObject
+$ sudo apt install python3-gi
+$ uv venv --system-site-packages --python /usr/bin/python3
 
-# create the venv using poetry
-$ poetry install
-$ poetry shell
-(.venv) $ gnome-extensions-cli --help
+# NixOS: shell.nix provides a Python with PyGObject, direnv does the rest
+$ direnv allow
+
+# install the dependencies, then run the checks and the tests
+$ uv sync
+$ just check
+$ just test
+$ uv run gnome-extensions-cli --help
 ```
 
 # Using
