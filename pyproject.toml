@@ -37,9 +37,48 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "black",
-    "pylint",
-    "pytest",
-    "pytest-cov",
-    "pytest-dotenv",
+    "mypy>=1.19",
+    "pytest>=8.4",
+    "pytest-cov>=7.0",
+    "ruff>=0.16",
+    "types-requests",
+    "types-tqdm",
 ]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "UP",    # pyupgrade (follows requires-python)
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "SIM",   # flake8-simplify
+    "RUF",   # ruff-specific rules
+    "ASYNC", # flake8-async
+    "S",     # flake8-bandit
+]
+
+[tool.ruff.lint.per-file-ignores]
+# `assert` is the normal pytest mechanism, not a production assert.
+"tests/**" = ["S101"]
+
+[tool.mypy]
+strict = true
+warn_unreachable = true
+warn_redundant_casts = true
+
+[[tool.mypy.overrides]]
+# PyGObject ships no stubs and is only importable where Nix/apt provides it.
+module = ["gi.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["gnome_extensions_cli"]

@@ -90,7 +90,7 @@ class FilesystemExtensionManager(ExtensionManager):
                 print(
                     "Enable extension", Label.installed(InstalledExtension(target_dir))
                 )
-        except BaseException as error:  # pylint: disable=broad-except
+        except BaseException as error:
             print(
                 Icons.BOOM,
                 f"Error while installing {ext.uuid}:",

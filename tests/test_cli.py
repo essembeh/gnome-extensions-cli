@@ -17,7 +17,7 @@ def run(capsys, args: str) -> Tuple[int, List[str], List[str]]:
         error.value.code,
         captured.out.splitlines(),
         captured.err.splitlines(),
-    )  # pyright: reportGeneralTypeIssues=false
+    )
 
 
 def assert_no_error(
