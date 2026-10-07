@@ -1,36 +1,45 @@
-[tool.poetry]
+[project]
 name = "gnome-extensions-cli"
 version = "0.11.0"
 description = "Command line tool to manage your Gnome Shell extensions"
-homepage = "https://github.com/essembeh/gnome-extensions-cli"
-authors = ["Sébastien MB <seb@essembeh.org>"]
+readme = "README.md"
 license = "Apache-2.0"
+authors = [{ name = "Sébastien MB", email = "seb@essembeh.org" }]
+# Published CLI: Debian stable ships 3.13, 3.12 is the oldest version still worth supporting.
+requires-python = ">=3.12"
 classifiers = [
     "Development Status :: 4 - Beta",
-    "License :: OSI Approved :: Apache Software License",
-    "Topic :: Utilities"
+    "Topic :: Utilities",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
-readme = "README.md"
+dependencies = [
+    "colorama>=0.4.5",
+    "packaging>=25.0",
+    "pydantic>=2.3.0",
+    "requests>=2.28.1",
+    "tqdm>=4.66.1",
+]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-colorama = "^0.4.5"
-pydantic = "^2.3.0"
-requests = "^2.28.1"
-packaging = "^25.0"
-tqdm = "^4.66.1"
+[project.urls]
+Homepage = "https://github.com/essembeh/gnome-extensions-cli"
+Repository = "https://github.com/essembeh/gnome-extensions-cli"
+Issues = "https://github.com/essembeh/gnome-extensions-cli/issues"
 
-[tool.poetry.group.dev.dependencies]
-black = "*"
-pylint = "*"
-pytest = "*"
-pytest-dotenv = "*"
-pytest-cov = "*"
-
-[tool.poetry.scripts]
+[project.scripts]
 gnome-extensions-cli = "gnome_extensions_cli.cli:run"
 gext = "gnome_extensions_cli.cli:run"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.9,<0.12"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "black",
+    "pylint",
+    "pytest",
+    "pytest-cov",
+    "pytest-dotenv",
+]

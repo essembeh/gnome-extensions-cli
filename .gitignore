@@ -1,12 +1,14 @@
 # Python
 __pycache__
 *.pyc
+/.venv/
 
 # Generated
 /.coverage
 /coverage.xml
 /htmlcov/
 /dist/
+/.direnv/
 
 # IDE
 /.vscode/*
