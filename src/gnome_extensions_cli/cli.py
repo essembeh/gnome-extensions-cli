@@ -112,6 +112,6 @@ def run() -> None:
         sys.exit(1)
     except SystemExit:
         raise
-    except BaseException as error:
+    except Exception as error:
         print(Icons.BOOM, "Error:", Color.RED(error))
-        raise error
+        raise

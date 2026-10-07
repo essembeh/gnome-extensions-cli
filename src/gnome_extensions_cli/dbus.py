@@ -22,7 +22,7 @@ def test_dbus_available(debug: bool = False) -> bool:
 
         dbus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
         return dbus is not None
-    except BaseException:
+    except Exception:
         if debug:
             print_exc()
     return False

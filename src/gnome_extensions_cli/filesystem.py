@@ -84,7 +84,7 @@ class FilesystemExtensionManager(ExtensionManager):
                 self.compile_schemas(target_dir)
             if self.enable_uuids(ext.uuid):
                 print("Enable extension", Label.installed(InstalledExtension(target_dir)))
-        except BaseException as error:
+        except Exception as error:
             print(
                 Icons.BOOM,
                 f"Error while installing {ext.uuid}:",
@@ -186,7 +186,7 @@ class FilesystemExtensionManager(ExtensionManager):
                 stdout=DEVNULL,
                 stderr=DEVNULL,
             )
-        except BaseException:
+        except Exception:
             print(
                 Icons.WARNING,
                 "Cannot compile schemas, you may need to manually compile schemas in",
