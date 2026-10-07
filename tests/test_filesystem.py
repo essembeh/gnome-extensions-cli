@@ -2,7 +2,7 @@ from gnome_extensions_cli.filesystem import FilesystemExtensionManager
 from gnome_extensions_cli.store import GnomeExtensionStore
 
 
-def test_filesystem():
+def test_filesystem() -> None:
     manager = FilesystemExtensionManager(store=GnomeExtensionStore())
 
     assert manager.get_current_shell_version() is not None

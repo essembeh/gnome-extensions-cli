@@ -32,13 +32,13 @@ class ExtensionManager(ABC):
         """
 
     @abstractmethod
-    def uninstall_extension(self, ext: InstalledExtension):
+    def uninstall_extension(self, ext: InstalledExtension) -> None:
         """
         Uninstall given extension
         """
 
     @abstractmethod
-    def edit_extension(self, ext: InstalledExtension):
+    def edit_extension(self, ext: InstalledExtension) -> None:
         """
         Edit preferences of given extension
         """

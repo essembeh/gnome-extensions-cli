@@ -41,6 +41,7 @@ dev = [
     "pytest>=8.4",
     "pytest-cov>=7.0",
     "ruff>=0.16",
+    "types-colorama>=0.4.15.20260508",
     "types-requests",
     "types-tqdm",
 ]

@@ -32,12 +32,12 @@ class Icons(Enum):
     THUMB_UP = "👍"
     TRASH = "🗑"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value
 
 
 def color(
-    *message: str,
+    *message: object,
     fore: str | None = None,
     back: str | None = None,
     style: str | None = None,
@@ -82,7 +82,7 @@ class Color(Enum):
     LIGHTCYAN_EX = Fore.LIGHTCYAN_EX
     LIGHTWHITE_EX = Fore.LIGHTWHITE_EX
 
-    def __call__(self, *args, style: str | None = None) -> str:
+    def __call__(self, *args: object, style: str | None = None) -> str:
         style = {"dim": Style.DIM, "bright": Style.BRIGHT}.get(style.lower()) or style if style is not None else style
         return color(*args, fore=self.value, style=style)
 

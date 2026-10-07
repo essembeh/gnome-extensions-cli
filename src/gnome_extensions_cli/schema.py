@@ -57,7 +57,7 @@ class InstalledExtension:
         return self.folder / "metadata.json"
 
     @property
-    def read_only(self):
+    def read_only(self) -> bool:
         return not os.access(str(self.folder), os.W_OK)
 
     @cached_property

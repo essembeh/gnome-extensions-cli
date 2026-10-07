@@ -10,7 +10,7 @@ from ..store import GnomeExtensionStore
 from .show import print_key_value
 
 
-def configure(parser: ArgumentParser):
+def configure(parser: ArgumentParser) -> None:
     """
     Configure parser for subcommand
     """
@@ -24,7 +24,7 @@ def configure(parser: ArgumentParser):
     )
 
 
-def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
+def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore) -> None:
     """
     Handler for subcommand
     """

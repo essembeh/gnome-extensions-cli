@@ -23,10 +23,11 @@ from .commands import (
 from .dbus import DbusExtensionManager, test_dbus_available
 from .filesystem import FilesystemExtensionManager
 from .icons import Color, Icons
+from .manager import ExtensionManager
 from .store import GnomeExtensionStore
 
 
-def run():
+def run() -> None:
     """
     entry point
     """
@@ -95,7 +96,7 @@ def run():
         store = GnomeExtensionStore()
 
         # instantiate manager
-        manager = None
+        manager: ExtensionManager
         if args.backend == "dbus":
             manager = DbusExtensionManager()
         elif args.backend == "filesystem":

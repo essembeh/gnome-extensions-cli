@@ -1,7 +1,7 @@
 from gnome_extensions_cli.store import GnomeExtensionStore
 
 
-def test_find():
+def test_find() -> None:
     store = GnomeExtensionStore()
 
     ext = store.find_by_uuid("todo.txt@bart.libert.gmail.com")
@@ -13,14 +13,14 @@ def test_find():
     assert ext == store.find_by_pk(ext.pk)
 
 
-def test_not_found():
+def test_not_found() -> None:
     store = GnomeExtensionStore()
 
     ext = store.find_by_uuid("this-extension-does-not-exists")
     assert ext is None
 
 
-def test_shell_version():
+def test_shell_version() -> None:
     store = GnomeExtensionStore()
 
     ext = store.find_by_uuid("todo.txt@bart.libert.gmail.com", shell_version="40")

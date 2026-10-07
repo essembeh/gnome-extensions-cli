@@ -35,7 +35,7 @@ class DbusExtensionManager(ExtensionManager):
     dbus schema: /usr/share/dbus-1/interfaces/org.gnome.Shell.Extensions.xml
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         from gi.repository import Gio
 
         dbus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
@@ -60,7 +60,8 @@ class DbusExtensionManager(ExtensionManager):
         self.settings = Gio.Settings.new("org.gnome.shell")
 
     def get_current_shell_version(self) -> str:
-        return self.proxy_properties.Get("(ss)", DBUS_INTERFACE, "ShellVersion")
+        version: str = self.proxy_properties.Get("(ss)", DBUS_INTERFACE, "ShellVersion")
+        return version
 
     def list_installed_extensions(self) -> list[InstalledExtension]:
         return list(
@@ -83,12 +84,13 @@ class DbusExtensionManager(ExtensionManager):
         )
 
     def install_extension(self, ext: AvailableExtension) -> bool:
-        return self.proxy_extensions.InstallRemoteExtension("(s)", ext.uuid) == "successful"
+        result: str = self.proxy_extensions.InstallRemoteExtension("(s)", ext.uuid)
+        return result == "successful"
 
-    def uninstall_extension(self, ext: InstalledExtension):
+    def uninstall_extension(self, ext: InstalledExtension) -> None:
         self.proxy_extensions.UninstallExtension("(s)", ext.uuid)
 
-    def edit_extension(self, ext: InstalledExtension):
+    def edit_extension(self, ext: InstalledExtension) -> None:
         self.proxy_extensions.LaunchExtensionPrefs("(s)", ext.uuid)
 
     def list_enabled_uuids(self) -> list[str]:

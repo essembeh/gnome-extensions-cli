@@ -96,7 +96,7 @@ class FilesystemExtensionManager(ExtensionManager):
             return False
         return True
 
-    def uninstall_extension(self, ext: InstalledExtension):
+    def uninstall_extension(self, ext: InstalledExtension) -> None:
         if ext.read_only:
             raise ValueError(f"Cannot uninstall a system extension {ext.uuid}")
         if self.disable_uuids(ext.uuid):
@@ -104,7 +104,7 @@ class FilesystemExtensionManager(ExtensionManager):
         rmtree(ext.folder)
         print("Remove folder", Label.folder(ext.folder))
 
-    def edit_extension(self, ext: InstalledExtension):
+    def edit_extension(self, ext: InstalledExtension) -> None:
         self._run(["gnome-extensions-app"])
 
     def list_enabled_uuids(self) -> list[str]:

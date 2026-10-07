@@ -4,7 +4,7 @@ from gnome_extensions_cli.schema import AvailableExtension, Metadata, Search
 from gnome_extensions_cli.utils import version_comparator
 
 
-def test_version():
+def test_version() -> None:
     for a, b, out in (
         (1, 2, 1),
         (2, 10, 1),
@@ -18,7 +18,7 @@ def test_version():
         assert version_comparator(b, a) == out * -1
 
 
-def test_schema():
+def test_schema() -> None:
     for folder in filter(
         Path.is_dir,
         [
@@ -33,7 +33,7 @@ def test_schema():
                 assert metadata is not None
 
 
-def test_samples():
+def test_samples() -> None:
     samples_dir = Path(__file__).parent / "samples"
     assert samples_dir.is_dir()
 

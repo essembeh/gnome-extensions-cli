@@ -12,7 +12,7 @@ from ..store import GnomeExtensionStore
 from ..utils import version_comparator
 
 
-def configure(parser: ArgumentParser):
+def configure(parser: ArgumentParser) -> None:
     """
     Configure parser for subcommand
     """
@@ -26,7 +26,7 @@ def configure(parser: ArgumentParser):
     )
 
 
-def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
+def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore) -> None:
     """
     Handler for subcommand
     """

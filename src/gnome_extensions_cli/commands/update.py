@@ -12,7 +12,7 @@ from ..store import GnomeExtensionStore
 from ..utils import confirm, version_comparator
 
 
-def configure(parser: ArgumentParser):
+def configure(parser: ArgumentParser) -> None:
     """
     Configure parser for subcommand
     """
@@ -49,7 +49,7 @@ def configure(parser: ArgumentParser):
     )
 
 
-def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
+def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore) -> None:
     """
     Handler for subcommand
     """
@@ -57,15 +57,15 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
     enabled_uuids = manager.list_enabled_uuids()
     shell_version = manager.get_current_shell_version()
 
-    extensions_to_fetch = []
+    extensions_to_fetch: list[str | int] = []
     if len(args.extensions):
         # Use extensions list given by the user
         extensions_to_fetch = args.extensions
     else:
         # Update all installed extensions that are enable and that have a version
-        for uuid, ext in installed_extensions.items():
-            if uuid in enabled_uuids and ext.metadata.version is not None:
-                extensions_to_fetch.append(uuid)
+        for installed_uuid, installed_ext in installed_extensions.items():
+            if installed_uuid in enabled_uuids and installed_ext.metadata.version is not None:
+                extensions_to_fetch.append(installed_uuid)
 
     # fetch available
     fetched_extensions = dict(

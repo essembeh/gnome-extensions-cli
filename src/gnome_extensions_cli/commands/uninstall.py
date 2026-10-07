@@ -9,7 +9,7 @@ from ..manager import ExtensionManager
 from ..store import GnomeExtensionStore
 
 
-def configure(parser: ArgumentParser):
+def configure(parser: ArgumentParser) -> None:
     """
     Configure parser for subcommand
     """
@@ -23,7 +23,7 @@ def configure(parser: ArgumentParser):
     )
 
 
-def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore):
+def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore) -> None:
     """
     Handler for subcommand
     """

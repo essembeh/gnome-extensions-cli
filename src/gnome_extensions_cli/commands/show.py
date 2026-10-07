@@ -12,7 +12,7 @@ from ..store import GnomeExtensionStore
 INDENT = "  "
 
 
-def configure(parser: ArgumentParser):
+def configure(parser: ArgumentParser) -> None:
     """
     Configure parser for subcommand
     """
@@ -26,7 +26,7 @@ def configure(parser: ArgumentParser):
     )
 
 
-def print_form(data: dict[str, Any], indent: str = ""):
+def print_form(data: dict[str, Any], indent: str = "") -> None:
     """
     Print a form-like from given data
     """
@@ -48,7 +48,7 @@ def print_form(data: dict[str, Any], indent: str = ""):
             print(f"{indent}{key}: {value}")
 
 
-def print_key_value(key: str, value: Any | None, indent: int = 0):
+def print_key_value(key: str, value: Any | None, indent: int = 0) -> None:
     """
     Print a key-value pair, handling indentation, formatting and colors
     """
@@ -64,7 +64,7 @@ def print_key_value(key: str, value: Any | None, indent: int = 0):
         )
 
 
-def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
+def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore) -> None:
     """
     Handler for subcommand
     """

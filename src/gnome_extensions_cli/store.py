@@ -23,7 +23,7 @@ class GnomeExtensionStore:
     timeout: int = 20
     session: Session = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.session = Session()
         self.session.mount(
             "https://",
@@ -94,9 +94,10 @@ class GnomeExtensionStore:
         """
         Search for extensions
         """
-        params = {"search": motif, "shell_version": shell_version, "page": 1}
+        page = 1
         found = 0
         while True:
+            params: dict[str, str | int] = {"search": motif, "shell_version": shell_version, "page": page}
             resp = self.session.get(
                 f"{self.url}/extension-query/",
                 params=params,
@@ -109,6 +110,6 @@ class GnomeExtensionStore:
                 found += 1
                 if 0 < limit <= found:
                     return
-            if params["page"] >= data.numpages:
+            if page >= data.numpages:
                 break
-            params["page"] += 1
+            page += 1
