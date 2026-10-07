@@ -36,9 +36,7 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
     if args.not_installed:
         installed_uuids = [e.uuid for e in manager.list_installed_extensions()]
         uuids += [
-            uuid
-            for uuid in manager.list_enabled_uuids()
-            if uuid not in installed_uuids and uuid not in args.uuids
+            uuid for uuid in manager.list_enabled_uuids() if uuid not in installed_uuids and uuid not in args.uuids
         ]
     print("Disable extension(s):")
     for uuid in uuids:

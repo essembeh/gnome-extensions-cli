@@ -32,15 +32,12 @@ def run():
     """
     parser = ArgumentParser(description="Gnome Shell extensions manager")
 
-    parser.add_argument(
-        "--version", action="version", version=f"%(prog)s {__version__}"
-    )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
 
     parser.add_argument(
         "--no-color",
         action="store_true",
-        help="disable colors and style in output text "
-        + "(you can also set NO_COLOR=1 instead of using this option)",
+        help="disable colors and style in output text " + "(you can also set NO_COLOR=1 instead of using this option)",
     )
     parser.add_argument(
         "--no-compile-schemas",
@@ -67,32 +64,16 @@ def run():
 
     subparsers = parser.add_subparsers()
 
-    list_.configure(
-        subparsers.add_parser("list", aliases=["ls"], help="list installed extensions")
-    )
-    search.configure(
-        subparsers.add_parser("search", aliases=[], help="search for extensions")
-    )
-    show.configure(
-        subparsers.add_parser("show", aliases=[], help="show extensions details")
-    )
+    list_.configure(subparsers.add_parser("list", aliases=["ls"], help="list installed extensions"))
+    search.configure(subparsers.add_parser("search", aliases=[], help="search for extensions"))
+    show.configure(subparsers.add_parser("show", aliases=[], help="show extensions details"))
 
-    install.configure(
-        subparsers.add_parser("install", aliases=["i"], help="install extensions")
-    )
-    uninstall.configure(
-        subparsers.add_parser("uninstall", aliases=[], help="uninstall extensions")
-    )
-    update.configure(
-        subparsers.add_parser("update", aliases=["u"], help="update extensions")
-    )
+    install.configure(subparsers.add_parser("install", aliases=["i"], help="install extensions"))
+    uninstall.configure(subparsers.add_parser("uninstall", aliases=[], help="uninstall extensions"))
+    update.configure(subparsers.add_parser("update", aliases=["u"], help="update extensions"))
 
-    enable.configure(
-        subparsers.add_parser("enable", aliases=[], help="enable extensions")
-    )
-    disable.configure(
-        subparsers.add_parser("disable", aliases=[], help="disable extensions")
-    )
+    enable.configure(subparsers.add_parser("enable", aliases=[], help="enable extensions"))
+    disable.configure(subparsers.add_parser("disable", aliases=[], help="disable extensions"))
     preferences.configure(
         subparsers.add_parser(
             "preferences",

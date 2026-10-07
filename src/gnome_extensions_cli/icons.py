@@ -83,11 +83,7 @@ class Color(Enum):
     LIGHTWHITE_EX = Fore.LIGHTWHITE_EX
 
     def __call__(self, *args, style: Optional[str] = None) -> str:
-        style = (
-            {"dim": Style.DIM, "bright": Style.BRIGHT}.get(style.lower()) or style
-            if style is not None
-            else style
-        )
+        style = {"dim": Style.DIM, "bright": Style.BRIGHT}.get(style.lower()) or style if style is not None else style
         return color(*args, fore=self.value, style=style)
 
 
@@ -128,9 +124,8 @@ class Label:
             name = Color.DEFAULT(name, style="bright")
         elif enabled is False:
             name = Color.DEFAULT(name, style="dim")
-        return (
-            f"{name} {Label.uuid(ext.metadata.uuid)} {Label.version(ext.metadata.version) or ''} "
-            + (Color.RED("/system") if ext.read_only else Color.GREEN("/user"))
+        return f"{name} {Label.uuid(ext.metadata.uuid)} {Label.version(ext.metadata.version) or ''} " + (
+            Color.RED("/system") if ext.read_only else Color.GREEN("/user")
         )
 
     @staticmethod

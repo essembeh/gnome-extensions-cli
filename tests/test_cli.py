@@ -20,9 +20,7 @@ def run(capsys, args: str) -> Tuple[int, List[str], List[str]]:
     )
 
 
-def assert_no_error(
-    rc: int, out: List[str], err: List[str]
-) -> Tuple[int, List[str], List[str]]:
+def assert_no_error(rc: int, out: List[str], err: List[str]) -> Tuple[int, List[str], List[str]]:
     assert rc == 0
     assert len(out) > 0
     assert len(err) == 0

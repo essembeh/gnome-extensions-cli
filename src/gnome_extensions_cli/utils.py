@@ -31,11 +31,7 @@ def confirm(message: str, default: Optional[bool] = None) -> bool:
     """
     while True:
         answer = input(
-            f"💬  {message} ["
-            + ("Y" if default is True else "y")
-            + "/"
-            + ("N" if default is False else "n")
-            + "] "
+            f"💬  {message} [" + ("Y" if default is True else "y") + "/" + ("N" if default is False else "n") + "] "
         )
         if answer == "" and default is not None:
             return default

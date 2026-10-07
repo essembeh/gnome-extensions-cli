@@ -19,9 +19,7 @@ def configure(parser: ArgumentParser):
     Configure parser for subcommand
     """
     parser.set_defaults(handler=run)
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="display more information"
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="display more information")
     parser.add_argument(
         "extensions",
         nargs=ONE_OR_MORE,
@@ -89,9 +87,7 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
 
     shell_version = manager.get_current_shell_version()
 
-    for motif, available_ext in store.iter_fetch(
-        dict.fromkeys(args.extensions), shell_version=shell_version
-    ):
+    for motif, available_ext in store.iter_fetch(dict.fromkeys(args.extensions), shell_version=shell_version):
         if available_ext is not None:
             installed_ext = installed_extensions.get(available_ext.uuid)
             print(
@@ -120,20 +116,14 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
             )
             continue
             print_key_value("link", Label.url(store.url, available_ext.link), 1)
-            print_key_value(
-                "screenshot", Label.url(store.url, available_ext.screenshot), 1
-            )
+            print_key_value("screenshot", Label.url(store.url, available_ext.screenshot), 1)
             print_key_value("creator", available_ext.creator, 1)
-            print_key_value(
-                "creator_url", Label.url(store.url, available_ext.creator_url), 1
-            )
+            print_key_value("creator_url", Label.url(store.url, available_ext.creator_url), 1)
             if args.verbose:
                 print_key_value("description", available_ext.description, 1)
             print_key_value("tag", available_ext.version_tag, 1)
             print_key_value("pk", available_ext.pk, 1)
-            print_key_value(
-                "recommended version", Label.version(available_ext.version), 1
-            )
+            print_key_value("recommended version", Label.version(available_ext.version), 1)
             if installed_ext is not None:
                 print_key_value(
                     "installed version",
@@ -150,9 +140,7 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
                         Label.version(app_version),
                         "for Gnome Shell",
                         Label.version(shell_versions[0]),
-                        f" to {Label.version(shell_versions[-1])}"
-                        if len(shell_versions) > 1
-                        else "",
+                        f" to {Label.version(shell_versions[-1])}" if len(shell_versions) > 1 else "",
                     )
                     if not args.verbose:
                         break

@@ -28,9 +28,7 @@ class FilesystemExtensionManager(ExtensionManager):
     """
 
     store: GnomeExtensionStore
-    user_folder: Path = field(
-        default=Path(expanduser("~/.local/share/gnome-shell/extensions"))
-    )
+    user_folder: Path = field(default=Path(expanduser("~/.local/share/gnome-shell/extensions")))
     system_folders: List[Path] = field(
         default_factory=lambda: [
             Path("/usr/share/gnome-shell/extensions"),
@@ -44,9 +42,7 @@ class FilesystemExtensionManager(ExtensionManager):
             ["gnome-shell", "--version"],
             text=True,
         )
-        matcher = fullmatch(
-            r"GNOME Shell (?P<version>[0-9]+(?:\.[0-9]+)?)(?:\..+)?", stdout.strip()
-        )
+        matcher = fullmatch(r"GNOME Shell (?P<version>[0-9]+(?:\.[0-9]+)?)(?:\..+)?", stdout.strip())
         assert matcher is not None, "Cannot retrieve Gnome Shell version"
         return matcher.group("version")
 
@@ -61,9 +57,7 @@ class FilesystemExtensionManager(ExtensionManager):
         return list(out.values())
 
     def install_extension(self, ext: AvailableExtension) -> bool:
-        assert ext.download_url is not None, (
-            f"Cannot find recommended version for {ext.uuid}"
-        )
+        assert ext.download_url is not None, f"Cannot find recommended version for {ext.uuid}"
         if self.disable_uuids(ext.uuid):
             print("Disable extension", ext.uuid)
         target_dir = self.user_folder / ext.uuid
@@ -87,9 +81,7 @@ class FilesystemExtensionManager(ExtensionManager):
             if self.auto_compile_schemas:
                 self.compile_schemas(target_dir)
             if self.enable_uuids(ext.uuid):
-                print(
-                    "Enable extension", Label.installed(InstalledExtension(target_dir))
-                )
+                print("Enable extension", Label.installed(InstalledExtension(target_dir)))
         except BaseException as error:
             print(
                 Icons.BOOM,

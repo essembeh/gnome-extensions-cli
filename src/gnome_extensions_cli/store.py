@@ -27,11 +27,7 @@ class GnomeExtensionStore:
         self.session = Session()
         self.session.mount(
             "https://",
-            HTTPAdapter(
-                max_retries=Retry(
-                    total=2, backoff_factor=1, status_forcelist=[500, 502, 503, 504]
-                )
-            ),
+            HTTPAdapter(max_retries=Retry(total=2, backoff_factor=1, status_forcelist=[500, 502, 503, 504])),
         )
 
     def iter_fetch(
@@ -44,17 +40,12 @@ class GnomeExtensionStore:
         Fetch multiple available extensions in parallel and yield when fetched
         """
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            jobs = {
-                executor.submit(lambda u: self.find(u, shell_version), ext): ext
-                for ext in extensions
-            }
+            jobs = {executor.submit(lambda u: self.find(u, shell_version), ext): ext for ext in extensions}
             for job in as_completed(jobs.keys()):
                 uuid = jobs[job]
                 yield (uuid, job.result())
 
-    def find(
-        self, ext: Union[str, int], shell_version: Optional[str] = None
-    ) -> Optional[AvailableExtension]:
+    def find(self, ext: Union[str, int], shell_version: Optional[str] = None) -> Optional[AvailableExtension]:
         """
         Find an extension by its uuid or pk
         """
@@ -64,9 +55,7 @@ class GnomeExtensionStore:
             return self.find_by_pk(int(ext), shell_version=shell_version)
         return self.find_by_uuid(ext, shell_version=shell_version)
 
-    def find_by_uuid(
-        self, uuid: str, shell_version: Optional[str] = None
-    ) -> Optional[AvailableExtension]:
+    def find_by_uuid(self, uuid: str, shell_version: Optional[str] = None) -> Optional[AvailableExtension]:
         """
         Find an extension by its uuid
         """
@@ -84,9 +73,7 @@ class GnomeExtensionStore:
 
         return AvailableExtension.model_validate_json(resp.text)
 
-    def find_by_pk(
-        self, pk: int, shell_version: Optional[str] = None
-    ) -> Optional[AvailableExtension]:
+    def find_by_pk(self, pk: int, shell_version: Optional[str] = None) -> Optional[AvailableExtension]:
         """
         Find an extension by its pk
         """
@@ -103,9 +90,7 @@ class GnomeExtensionStore:
         resp.raise_for_status()
         return AvailableExtension.model_validate_json(resp.text)
 
-    def search(
-        self, motif: str, shell_version: str = "all", limit: int = 0
-    ) -> Iterable[AvailableExtension]:
+    def search(self, motif: str, shell_version: str = "all", limit: int = 0) -> Iterable[AvailableExtension]:
         """
         Search for extensions
         """

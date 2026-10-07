@@ -37,23 +37,7 @@ def test_samples():
     samples_dir = Path(__file__).parent / "samples"
     assert samples_dir.is_dir()
 
-    assert (
-        AvailableExtension.model_validate_json(
-            (samples_dir / "available.json").read_text()
-        )
-        is not None
-    )
-    assert (
-        AvailableExtension.model_validate_json(
-            (samples_dir / "available-alt.json").read_text()
-        )
-        is not None
-    )
-    assert (
-        Metadata.model_validate_json((samples_dir / "installed.json").read_text())
-        is not None
-    )
-    assert (
-        Search.model_validate_json((samples_dir / "search.json").read_text())
-        is not None
-    )
+    assert AvailableExtension.model_validate_json((samples_dir / "available.json").read_text()) is not None
+    assert AvailableExtension.model_validate_json((samples_dir / "available-alt.json").read_text()) is not None
+    assert Metadata.model_validate_json((samples_dir / "installed.json").read_text()) is not None
+    assert Search.model_validate_json((samples_dir / "search.json").read_text()) is not None

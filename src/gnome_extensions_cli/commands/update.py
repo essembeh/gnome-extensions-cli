@@ -34,8 +34,7 @@ def configure(parser: ArgumentParser):
         "-n",
         "--dry-run",
         action="store_true",
-        help="do not update nor install anything, "
-        + "a return code 17 is returned if updates are available",
+        help="do not update nor install anything, " + "a return code 17 is returned if updates are available",
     )
     parser.add_argument(
         "--user",

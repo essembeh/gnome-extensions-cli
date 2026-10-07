@@ -84,10 +84,7 @@ class DbusExtensionManager(ExtensionManager):
         )
 
     def install_extension(self, ext: AvailableExtension) -> bool:
-        return (
-            self.proxy_extensions.InstallRemoteExtension("(s)", ext.uuid)
-            == "successful"
-        )
+        return self.proxy_extensions.InstallRemoteExtension("(s)", ext.uuid) == "successful"
 
     def uninstall_extension(self, ext: InstalledExtension):
         self.proxy_extensions.UninstallExtension("(s)", ext.uuid)

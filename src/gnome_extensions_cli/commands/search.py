@@ -15,9 +15,7 @@ def configure(parser: ArgumentParser):
     Configure parser for subcommand
     """
     parser.set_defaults(handler=run)
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="search for extensions"
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="search for extensions")
     parser.add_argument("-l", "--limit", type=int, default=0, help="limit to N items")
     parser.add_argument(
         "motif",
@@ -46,9 +44,7 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
         print_key_value("creator", available_ext.creator, 1)
         print_key_value("recommended version", Label.version(available_ext.version), 1)
         if installed_ext is not None:
-            print_key_value(
-                "installed version", Label.version(installed_ext.metadata.version), 1
-            )
+            print_key_value("installed version", Label.version(installed_ext.metadata.version), 1)
         if args.verbose:
             print_key_value("description", available_ext.description, 1)
 

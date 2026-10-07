@@ -15,12 +15,8 @@ def configure(parser: ArgumentParser):
     """
     parser.set_defaults(handler=run)
 
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="display more information"
-    )
-    parser.add_argument(
-        "--only-uuid", action="store_true", help="display only uuid of extensions"
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="display more information")
+    parser.add_argument("--only-uuid", action="store_true", help="display only uuid of extensions")
     parser.add_argument(
         "-a",
         "--all",
@@ -45,9 +41,7 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
             f"(enabled: {Icons.DOT_BLUE}, disabled: {Icons.DOT_WHITE})",
         )
 
-    installed_extensions = sorted(
-        manager.list_installed_extensions(), key=lambda x: x.uuid.lower()
-    )
+    installed_extensions = sorted(manager.list_installed_extensions(), key=lambda x: x.uuid.lower())
     enabled_uuids = manager.list_enabled_uuids()
 
     for installed_ext in installed_extensions:
@@ -63,9 +57,7 @@ def run(args: Namespace, manager: ExtensionManager, _store: GnomeExtensionStore)
                 if only_uuid:
                     print(installed_ext.metadata.uuid)
                 else:
-                    print(
-                        Icons.DOT_WHITE, Label.installed(installed_ext, enabled=False)
-                    )
+                    print(Icons.DOT_WHITE, Label.installed(installed_ext, enabled=False))
 
     if verbose:
         print()
