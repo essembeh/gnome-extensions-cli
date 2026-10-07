@@ -20,7 +20,7 @@ from .commands import (
     uninstall,
     update,
 )
-from .dbus import DbusExtensionManager, test_dbus_available
+from .dbus import DbusExtensionManager, is_dbus_available
 from .filesystem import FilesystemExtensionManager
 from .icons import Color, Icons
 from .manager import ExtensionManager
@@ -101,7 +101,7 @@ def run() -> None:
             manager = DbusExtensionManager()
         elif args.backend == "filesystem":
             manager = FilesystemExtensionManager(store)
-        elif test_dbus_available(getenv("DEBUG") == "1"):
+        elif is_dbus_available(getenv("DEBUG") == "1"):
             manager = DbusExtensionManager()
         else:
             manager = FilesystemExtensionManager(store)

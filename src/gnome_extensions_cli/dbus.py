@@ -13,7 +13,7 @@ DBUS_INTERFACE = "org.gnome.Shell"
 DBUS_PATH = "/org/gnome/Shell"
 
 
-def test_dbus_available(debug: bool = False) -> bool:
+def is_dbus_available(debug: bool = False) -> bool:
     """
     Test if DBus is available
     """
