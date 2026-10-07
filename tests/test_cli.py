@@ -1,5 +1,4 @@
 import shlex
-from typing import List, Tuple
 from unittest import mock
 
 import pytest
@@ -8,10 +7,9 @@ from gnome_extensions_cli import __version__ as version
 from gnome_extensions_cli import cli
 
 
-def run(capsys, args: str) -> Tuple[int, List[str], List[str]]:
-    with pytest.raises(SystemExit) as error:
-        with mock.patch("sys.argv", ["gext"] + shlex.split(args)):
-            cli.run()
+def run(capsys, args: str) -> tuple[int, list[str], list[str]]:
+    with pytest.raises(SystemExit) as error, mock.patch("sys.argv", ["gext", *shlex.split(args)]):
+        cli.run()
     captured = capsys.readouterr()
     return (
         error.value.code,
@@ -20,7 +18,7 @@ def run(capsys, args: str) -> Tuple[int, List[str], List[str]]:
     )
 
 
-def assert_no_error(rc: int, out: List[str], err: List[str]) -> Tuple[int, List[str], List[str]]:
+def assert_no_error(rc: int, out: list[str], err: list[str]) -> tuple[int, list[str], list[str]]:
     assert rc == 0
     assert len(out) > 0
     assert len(err) == 0

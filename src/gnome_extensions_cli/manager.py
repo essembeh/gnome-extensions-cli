@@ -3,7 +3,6 @@ gnome-extensions-cli
 """
 
 from abc import ABC, abstractmethod
-from typing import List
 
 from .schema import AvailableExtension, InstalledExtension
 
@@ -21,7 +20,7 @@ class ExtensionManager(ABC):
         """
 
     @abstractmethod
-    def list_installed_extensions(self) -> List[InstalledExtension]:
+    def list_installed_extensions(self) -> list[InstalledExtension]:
         """
         List installed extensions
         """
@@ -45,13 +44,13 @@ class ExtensionManager(ABC):
         """
 
     @abstractmethod
-    def list_enabled_uuids(self) -> List[str]:
+    def list_enabled_uuids(self) -> list[str]:
         """
         List enabled extensions uuids
         """
 
     @abstractmethod
-    def set_enabled_uuids(self, uuids: List[str]) -> bool:
+    def set_enabled_uuids(self, uuids: list[str]) -> bool:
         """
         Set enabled extensions uuids
         """

@@ -6,7 +6,6 @@ import os
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
@@ -14,12 +13,12 @@ from pydantic import BaseModel, Field
 class Metadata(BaseModel):
     uuid: str
     name: str
-    description: Optional[str] = None
-    extension_id: Optional[str] = Field(alias="extension-id", default=None)
-    shell_version: Optional[List[str]] = Field(alias="shell-version", default=None)
-    url: Optional[str] = None
-    version: Optional[Union[str, int, float]] = None
-    path: Optional[Path] = None
+    description: str | None = None
+    extension_id: str | None = Field(alias="extension-id", default=None)
+    shell_version: list[str] | None = Field(alias="shell-version", default=None)
+    url: str | None = None
+    version: str | int | float | None = None
+    path: Path | None = None
 
 
 class _Version(BaseModel):
@@ -33,18 +32,18 @@ class AvailableExtension(BaseModel):
     name: str
     description: str
     creator: str
-    creator_url: Optional[str] = None
-    link: Optional[str] = None
-    icon: Optional[str] = None
-    screenshot: Optional[str] = None
-    shell_version_map: Dict[str, _Version]
-    version: Optional[int] = None
-    version_tag: Optional[int] = None
-    download_url: Optional[str] = None
+    creator_url: str | None = None
+    link: str | None = None
+    icon: str | None = None
+    screenshot: str | None = None
+    shell_version_map: dict[str, _Version]
+    version: int | None = None
+    version_tag: int | None = None
+    download_url: str | None = None
 
 
 class Search(BaseModel):
-    extensions: List[AvailableExtension]
+    extensions: list[AvailableExtension]
     total: int
     numpages: int
 

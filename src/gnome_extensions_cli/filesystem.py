@@ -11,7 +11,6 @@ from re import finditer, fullmatch
 from shutil import rmtree
 from subprocess import DEVNULL, run
 from tempfile import NamedTemporaryFile
-from typing import List
 from urllib.request import urlopen
 from zipfile import ZipFile
 
@@ -29,7 +28,7 @@ class FilesystemExtensionManager(ExtensionManager):
 
     store: GnomeExtensionStore
     user_folder: Path = field(default=Path(expanduser("~/.local/share/gnome-shell/extensions")))
-    system_folders: List[Path] = field(
+    system_folders: list[Path] = field(
         default_factory=lambda: [
             Path("/usr/share/gnome-shell/extensions"),
             Path("/usr/local/share/gnome-shell/extensions"),
@@ -43,12 +42,13 @@ class FilesystemExtensionManager(ExtensionManager):
             text=True,
         )
         matcher = fullmatch(r"GNOME Shell (?P<version>[0-9]+(?:\.[0-9]+)?)(?:\..+)?", stdout.strip())
-        assert matcher is not None, "Cannot retrieve Gnome Shell version"
+        if matcher is None:
+            raise RuntimeError("Cannot retrieve Gnome Shell version")
         return matcher.group("version")
 
-    def list_installed_extensions(self) -> List[InstalledExtension]:
+    def list_installed_extensions(self) -> list[InstalledExtension]:
         out = {}
-        for folder in filter(Path.is_dir, self.system_folders + [self.user_folder]):
+        for folder in filter(Path.is_dir, [*self.system_folders, self.user_folder]):
             for subfolder in sorted(folder.iterdir()):
                 metadata_file = subfolder / "metadata.json"
                 if metadata_file.is_file():
@@ -57,7 +57,8 @@ class FilesystemExtensionManager(ExtensionManager):
         return list(out.values())
 
     def install_extension(self, ext: AvailableExtension) -> bool:
-        assert ext.download_url is not None, f"Cannot find recommended version for {ext.uuid}"
+        if ext.download_url is None:
+            raise ValueError(f"Cannot find recommended version for {ext.uuid}")
         if self.disable_uuids(ext.uuid):
             print("Disable extension", ext.uuid)
         target_dir = self.user_folder / ext.uuid
@@ -95,7 +96,8 @@ class FilesystemExtensionManager(ExtensionManager):
         return True
 
     def uninstall_extension(self, ext: InstalledExtension):
-        assert not ext.read_only, f"Cannot uninstall a system extension {ext.uuid}"
+        if ext.read_only:
+            raise ValueError(f"Cannot uninstall a system extension {ext.uuid}")
         if self.disable_uuids(ext.uuid):
             print("Disable", Label.installed(ext))
         rmtree(ext.folder)
@@ -104,7 +106,7 @@ class FilesystemExtensionManager(ExtensionManager):
     def edit_extension(self, ext: InstalledExtension):
         self._run(["gnome-extensions-app"])
 
-    def list_enabled_uuids(self) -> List[str]:
+    def list_enabled_uuids(self) -> list[str]:
         stdout = subprocess.check_output(
             ["gsettings", "get", "org.gnome.shell", "enabled-extensions"],
             text=True,
@@ -112,8 +114,8 @@ class FilesystemExtensionManager(ExtensionManager):
         uuids = [m.group("uuid") for m in finditer(r"'(?P<uuid>[^']+)'", stdout)]
         return uuids
 
-    def set_enabled_uuids(self, uuids: List[str]) -> bool:
-        uuids_text = ",".join((f'"{uuid}"' for uuid in uuids))
+    def set_enabled_uuids(self, uuids: list[str]) -> bool:
+        uuids_text = ",".join(f'"{uuid}"' for uuid in uuids)
         command = [
             "gsettings",
             "set",
@@ -152,7 +154,7 @@ class FilesystemExtensionManager(ExtensionManager):
             return False
         return True
 
-    def _run(self, command: List[str]) -> int:
+    def _run(self, command: list[str]) -> int:
         """
         Run an external process
         """

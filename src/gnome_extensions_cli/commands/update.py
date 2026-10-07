@@ -68,14 +68,13 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
                 extensions_to_fetch.append(uuid)
 
     # fetch available
-    fetched_extensions = {
-        uuid: ext
-        for uuid, ext in tqdm(
+    fetched_extensions = dict(
+        tqdm(
             store.iter_fetch(extensions_to_fetch, shell_version=shell_version),
             unit=" extension(s) fetched",
             total=len(extensions_to_fetch),
         )
-    }
+    )
     extensions_to_update = []
     extensions_to_install = []
     count = 0

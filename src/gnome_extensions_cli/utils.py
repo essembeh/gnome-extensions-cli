@@ -2,7 +2,7 @@
 gnome-extensions-cli
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from packaging.version import Version
 
@@ -25,7 +25,7 @@ def version_comparator(left: Any, right: Any) -> int:
     return 0
 
 
-def confirm(message: str, default: Optional[bool] = None) -> bool:
+def confirm(message: str, default: bool | None = None) -> bool:
     """
     Simple interactive confirmation
     """

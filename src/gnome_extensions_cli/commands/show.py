@@ -3,7 +3,7 @@ gnome-extensions-cli
 """
 
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any
 
 from gnome_extensions_cli.schema import AvailableExtension
 
@@ -28,7 +28,7 @@ def configure(parser: ArgumentParser):
     )
 
 
-def print_form(data: Dict[str, Any], indent: str = ""):
+def print_form(data: dict[str, Any], indent: str = ""):
     """
     Print a form-like from given data
     """
@@ -50,7 +50,7 @@ def print_form(data: Dict[str, Any], indent: str = ""):
             print(f"{indent}{key}: {value}")
 
 
-def print_key_value(key: str, value: Optional[Any], indent: int = 0):
+def print_key_value(key: str, value: Any | None, indent: int = 0):
     """
     Print a key-value pair, handling indentation, formatting and colors
     """
@@ -66,7 +66,7 @@ def print_key_value(key: str, value: Optional[Any], indent: int = 0):
         )
 
 
-def build_versions_dict(ext: AvailableExtension) -> Dict[int, List[str]]:
+def build_versions_dict(ext: AvailableExtension) -> dict[int, list[str]]:
     """
     Build a disctionnary of supported Gnome Shell version per app version
     """

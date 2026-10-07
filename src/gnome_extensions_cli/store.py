@@ -2,9 +2,9 @@
 gnome-extensions-cli
 """
 
+from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
-from typing import Iterable, Optional, Tuple, Union
 
 from requests import Session
 from requests.adapters import HTTPAdapter
@@ -32,10 +32,10 @@ class GnomeExtensionStore:
 
     def iter_fetch(
         self,
-        extensions: Iterable[Union[str, int]],
-        shell_version: Optional[str] = None,
-        max_workers: Optional[int] = None,
-    ) -> Iterable[Tuple[Union[str, int], Optional[AvailableExtension]]]:
+        extensions: Iterable[str | int],
+        shell_version: str | None = None,
+        max_workers: int | None = None,
+    ) -> Iterable[tuple[str | int, AvailableExtension | None]]:
         """
         Fetch multiple available extensions in parallel and yield when fetched
         """
@@ -45,7 +45,7 @@ class GnomeExtensionStore:
                 uuid = jobs[job]
                 yield (uuid, job.result())
 
-    def find(self, ext: Union[str, int], shell_version: Optional[str] = None) -> Optional[AvailableExtension]:
+    def find(self, ext: str | int, shell_version: str | None = None) -> AvailableExtension | None:
         """
         Find an extension by its uuid or pk
         """
@@ -55,7 +55,7 @@ class GnomeExtensionStore:
             return self.find_by_pk(int(ext), shell_version=shell_version)
         return self.find_by_uuid(ext, shell_version=shell_version)
 
-    def find_by_uuid(self, uuid: str, shell_version: Optional[str] = None) -> Optional[AvailableExtension]:
+    def find_by_uuid(self, uuid: str, shell_version: str | None = None) -> AvailableExtension | None:
         """
         Find an extension by its uuid
         """
@@ -73,7 +73,7 @@ class GnomeExtensionStore:
 
         return AvailableExtension.model_validate_json(resp.text)
 
-    def find_by_pk(self, pk: int, shell_version: Optional[str] = None) -> Optional[AvailableExtension]:
+    def find_by_pk(self, pk: int, shell_version: str | None = None) -> AvailableExtension | None:
         """
         Find an extension by its pk
         """

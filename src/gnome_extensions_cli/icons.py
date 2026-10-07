@@ -4,7 +4,7 @@ gnome-extensions-cli
 
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from colorama import Back, Fore, Style
 
@@ -38,9 +38,9 @@ class Icons(Enum):
 
 def color(
     *message: str,
-    fore: Optional[str] = None,
-    back: Optional[str] = None,
-    style: Optional[str] = None,
+    fore: str | None = None,
+    back: str | None = None,
+    style: str | None = None,
 ) -> str:
     """
     string formatter with color and style
@@ -82,7 +82,7 @@ class Color(Enum):
     LIGHTCYAN_EX = Fore.LIGHTCYAN_EX
     LIGHTWHITE_EX = Fore.LIGHTWHITE_EX
 
-    def __call__(self, *args, style: Optional[str] = None) -> str:
+    def __call__(self, *args, style: str | None = None) -> str:
         style = {"dim": Style.DIM, "bright": Style.BRIGHT}.get(style.lower()) or style if style is not None else style
         return color(*args, fore=self.value, style=style)
 
@@ -97,11 +97,11 @@ class Label:
         return f"({Color.YELLOW(uuid)})"
 
     @staticmethod
-    def version(version: Optional[Any]) -> Optional[str]:
+    def version(version: Any | None) -> str | None:
         return f"v{version}" if version is not None else None
 
     @staticmethod
-    def url(base: str, path: Optional[str]) -> Optional[str]:
+    def url(base: str, path: str | None) -> str | None:
         return Color.BLUE(base + path) if path is not None else None
 
     @staticmethod
@@ -118,7 +118,7 @@ class Label:
         )
 
     @staticmethod
-    def installed(ext: InstalledExtension, enabled: Optional[bool] = None) -> str:
+    def installed(ext: InstalledExtension, enabled: bool | None = None) -> str:
         name = ext.metadata.name
         if enabled is True:
             name = Color.DEFAULT(name, style="bright")

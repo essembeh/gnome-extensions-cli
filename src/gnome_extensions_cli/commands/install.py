@@ -35,14 +35,13 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
     shell_version = manager.get_current_shell_version()
 
     extensions_to_fetch = dict.fromkeys(args.extensions)
-    fetched_extensions = {
-        uuid: ext
-        for uuid, ext in tqdm(
+    fetched_extensions = dict(
+        tqdm(
             store.iter_fetch(extensions_to_fetch, shell_version=shell_version),
             unit=" extension(s) fetched",
             total=len(extensions_to_fetch),
         )
-    }
+    )
 
     for motif, available_ext in fetched_extensions.items():
         if available_ext is None:

@@ -5,7 +5,6 @@ gnome-extensions-cli
 from operator import itemgetter
 from pathlib import Path
 from traceback import print_exc
-from typing import List
 
 from .manager import ExtensionManager
 from .schema import AvailableExtension, InstalledExtension
@@ -63,7 +62,7 @@ class DbusExtensionManager(ExtensionManager):
     def get_current_shell_version(self) -> str:
         return self.proxy_properties.Get("(ss)", DBUS_INTERFACE, "ShellVersion")
 
-    def list_installed_extensions(self) -> List[InstalledExtension]:
+    def list_installed_extensions(self) -> list[InstalledExtension]:
         return list(
             map(
                 InstalledExtension,
@@ -92,9 +91,9 @@ class DbusExtensionManager(ExtensionManager):
     def edit_extension(self, ext: InstalledExtension):
         self.proxy_extensions.LaunchExtensionPrefs("(s)", ext.uuid)
 
-    def list_enabled_uuids(self) -> List[str]:
+    def list_enabled_uuids(self) -> list[str]:
         return list(self.settings["enabled-extensions"])
 
-    def set_enabled_uuids(self, uuids: List[str]) -> bool:
+    def set_enabled_uuids(self, uuids: list[str]) -> bool:
         self.settings["enabled-extensions"] = uuids
         return True
