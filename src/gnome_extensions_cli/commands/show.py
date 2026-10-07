@@ -5,8 +5,11 @@ gnome-extensions-cli
 from argparse import ONE_OR_MORE, ArgumentParser, Namespace
 from typing import Any
 
+from packaging.version import Version
+
 from ..icons import Color, Icons, Label
 from ..manager import ExtensionManager
+from ..schema import AvailableExtension
 from ..store import GnomeExtensionStore
 
 INDENT = "  "
@@ -64,6 +67,24 @@ def print_key_value(key: str, value: Any | None, indent: int = 0) -> None:
         )
 
 
+def format_available_versions(ext: AvailableExtension) -> list[str]:
+    """
+    One line per extension version with the range of Gnome Shell versions it supports
+    """
+    shell_versions_by_app_version: dict[int, list[str]] = {}
+    for shell_version, app in ext.shell_version_map.items():
+        shell_versions_by_app_version.setdefault(app.version, []).append(shell_version)
+
+    out = []
+    for app_version, shell_versions in sorted(shell_versions_by_app_version.items(), reverse=True):
+        shell_versions.sort(key=Version)
+        line = f"{Label.version(app_version)} for Gnome Shell {Label.version(shell_versions[0])}"
+        if len(shell_versions) > 1:
+            line += f" to {Label.version(shell_versions[-1])}"
+        out.append(line)
+    return out
+
+
 def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore) -> None:
     """
     Handler for subcommand
@@ -95,7 +116,7 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore) 
                     if installed_ext is not None
                     else None,
                     "versions": list(available_ext.shell_version_map.keys()),
-                    "available versions": None,
+                    "available versions": format_available_versions(available_ext) if args.verbose else None,
                 },
                 indent="    ",
             )

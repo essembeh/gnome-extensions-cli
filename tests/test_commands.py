@@ -158,7 +158,17 @@ def test_show(manager: FakeExtensionManager, sample_store: SampleStore, capsys: 
     assert SAMPLE_UUID in out
     assert "v35" in out
     assert "v30" in out
+    assert "v39 for Gnome Shell v43" in out
+    assert "v37 for Gnome Shell v41 to v42" in out
     assert "Cannot find extension nope" in out
+
+
+def test_show_not_verbose(
+    manager: FakeExtensionManager, sample_store: SampleStore, capsys: CaptureFixture[str]
+) -> None:
+    show.run(Namespace(extensions=["570"], verbose=False), manager, sample_store)
+
+    assert "for Gnome Shell" not in capsys.readouterr().out
 
 
 def test_search(manager: FakeExtensionManager, sample_store: SampleStore, capsys: CaptureFixture[str]) -> None:
