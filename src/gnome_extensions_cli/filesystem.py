@@ -72,7 +72,8 @@ class FilesystemExtensionManager(ExtensionManager):
                     "Download extensions from",
                     Label.url(self.store.url, ext.download_url),
                 )
-                with urlopen(self.store.url + ext.download_url) as stream:
+                # The scheme is fixed by store.url (https), only the path comes from the API.
+                with urlopen(self.store.url + ext.download_url) as stream:  # noqa: S310
                     tmp.write(stream.read())
                 tmp.seek(0)
                 print("Extract extension to", Label.folder(target_dir))

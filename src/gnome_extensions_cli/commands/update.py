@@ -77,9 +77,7 @@ def run(args: Namespace, manager: ExtensionManager, store: GnomeExtensionStore):
     )
     extensions_to_update = []
     extensions_to_install = []
-    count = 0
-    for uuid, available_ext in fetched_extensions.items():
-        count += 1
+    for count, (uuid, available_ext) in enumerate(fetched_extensions.items(), start=1):
         progress = f"[{count}]"
         if available_ext is None:
             # cannot fetch extension

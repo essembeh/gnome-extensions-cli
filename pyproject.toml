@@ -66,6 +66,8 @@ select = [
 [tool.ruff.lint.per-file-ignores]
 # `assert` is the normal pytest mechanism, not a production assert.
 "tests/**" = ["S101"]
+# This backend drives GNOME tools (gsettings, gnome-shell, ...) found on PATH with fixed argv lists.
+"src/gnome_extensions_cli/filesystem.py" = ["S603", "S607"]
 
 [tool.mypy]
 strict = true
