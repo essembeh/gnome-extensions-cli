@@ -56,8 +56,17 @@ class FilesystemExtensionManager(ExtensionManager):
             for subfolder in sorted(folder.iterdir()):
                 metadata_file = subfolder / "metadata.json"
                 if metadata_file.is_file():
-                    ext = InstalledExtension(subfolder)
-                    out[ext.uuid] = ext
+                    try:
+                        ext = InstalledExtension(subfolder)
+                        out[ext.uuid] = ext
+                    except (OSError, ValueError) as error:
+                        print(
+                            Icons.WARNING,
+                            "Skipping",
+                            Label.folder(subfolder),
+                            f"unreadable metadata.json ({error})",
+                            file=sys.stderr,
+                        )
         return list(out.values())
 
     def install_extension(self, ext: AvailableExtension) -> bool:
